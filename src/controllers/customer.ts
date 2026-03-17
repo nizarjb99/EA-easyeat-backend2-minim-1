@@ -14,8 +14,7 @@ const createCustomer = async (req: Request, res: Response, next: NextFunction) =
 };
 
 const readCustomer = async (req: Request, res: Response, next: NextFunction) => {
-    const customerId = req.params.CustomerId;
-
+    const customerId = req.params.customerId;
     try {
         const customer = await CustomerService.getCustomer(customerId);
         return customer ? res.status(200).json(customer) : res.status(404).json({ message: 'not found' });

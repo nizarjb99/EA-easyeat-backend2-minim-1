@@ -7,16 +7,7 @@ const createCustomer = async (data: Partial<ICustomer>) => {
         _id: new mongoose.Types.ObjectId(),
         ...data
     });
-
     return await customer.save();
-
-    // Afegir customer al restaurant
-    //await Organization.findByIdAndUpdate(
-        //savedCustomer.restaurant,
-        //{ $addToSet: { customers: savedCustomer._id } }
-    //);
-
-    //return savedCustomer;
 };
 
 const getCustomer = async (customerId: string) => {

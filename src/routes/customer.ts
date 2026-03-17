@@ -7,8 +7,8 @@ const router = express.Router();
 /**
  * @openapi
  * tags:
- *   - name: Customers
- *     description: CRUD endpoints for customers.
+ *   - name: Customer
+ *     description: CRUD endpoints for customer.
  *
  * components:
  *   schemas:
@@ -39,9 +39,9 @@ const router = express.Router();
  *         email:
  *           type: string
  *           example: "nizar@gmail.com"
- *         passwordHash:
+ *         password:
  *           type: string
- *           example: "$2b$10$abcdefghijklmnopqrstuv"
+ *           example: "password123"
  *         profilePictures:
  *           type: array
  *           items:
@@ -84,7 +84,7 @@ const router = express.Router();
  *           example:
  *             - "65f1c2a1b2c3d4e5f6789019"
  * 
- *     CustomerCreateUpdate:
+ *     CreateCustomer:
  *       type: object
  *       required:
  *         - name
@@ -96,43 +96,37 @@ const router = express.Router();
  *         email:
  *           type: string
  *           example: "nizar@gmail.com"
- *         passwordHash:
+ *         password:
  *           type: string
- *           example: "$2b$10$abcdefghijklmnopqrstuv"
- *         profilePictures:
- *           type: array
- *           items:
- *             type: string
- *         pointsWallet:
- *           type: array
- *           items:
- *             $ref: '#/components/schemas/PointsWallet'
- *         visitHistory:
- *           type: array
- *           items:
- *             type: string
- *         favoriteRestaurants:
- *           type: array
- *           items:
- *             type: string
- *         badges:
- *           type: array
- *           items:
- *             type: string
- *         reviews:
- *           type: array
- *           items:
- *             type: string
+ *           example: "password123"
  */
 
+/**
+ * @openapi
+ * /customer:
+ *   post:
+ *     summary: Creates a new customer
+ *     tags: [Customer]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CreateCustomer'
+ *     responses:
+ *       201:
+ *         description: Created
+ *       422:
+ *         description: Validation error
+ */
 router.post('/', ValidateJoi(Schemas.customer.create), controller.createCustomer);
 
 /**
  * @openapi
- * /customers/{customerId}:
+ * /customer/{customerId}:
  *   get:
  *     summary: Gets a customer by ID
- *     tags: [Customers]
+ *     tags: [Customer]
  *     parameters:
  *       - in: path
  *         name: customerId
@@ -150,10 +144,10 @@ router.get('/:customerId', controller.readCustomer);
 
 /**
  * @openapi
- * /customers:
+ * /customer:
  *   get:
- *     summary: Lists all customers
- *     tags: [Customers]
+ *     summary: Lists all customer
+ *     tags: [Customer]
  *     responses:
  *       200:
  *         description: OK
@@ -162,10 +156,10 @@ router.get('/', controller.readAll);
 
 /**
  * @openapi
- * /customers/{customerId}:
+ * /Customer/{customerId}:
  *   put:
  *     summary: Updates a customer by ID
- *     tags: [Customers]
+ *     tags: [Customer]
  *     parameters:
  *       - in: path
  *         name: customerId
@@ -178,7 +172,7 @@ router.get('/', controller.readAll);
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/CustomerCreateUpdate'
+ *             $ref: '#/components/schemas/CreateCustomer'
  *     responses:
  *       201:
  *         description: Updated
@@ -191,10 +185,10 @@ router.put('/:customerId', ValidateJoi(Schemas.customer.update), controller.upda
 
 /**
  * @openapi
- * /customers/{customerId}:
+ * /Customer/{customerId}:
  *   delete:
  *     summary: Deletes a customer by ID
- *     tags: [Customers]
+ *     tags: [Customer]
  *     parameters:
  *       - in: path
  *         name: customerId
