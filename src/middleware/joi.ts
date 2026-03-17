@@ -254,7 +254,7 @@ export const Schemas = {
 
                 location: Joi.object({
                     city: Joi.string().required(),
-                    address: Joi.string().required(),
+                    address: Joi.string(),
                     googlePlaceId: Joi.string(),
                     coordinates: Joi.object({
                         type: Joi.string().valid('Point').default('Point'),
@@ -262,8 +262,8 @@ export const Schemas = {
                             .items(Joi.number())
                             .length(2)
                             .required()
-                    }).required()
-                }).required()
+                    })
+                })
             }).required(),
 
             employees: Joi.array().items(objectId),

@@ -185,17 +185,6 @@ router.post('/', ValidateJoi(Schemas.restaurant.create), controller.createRestau
  *   get:
  *     summary: Lists all restaurants
  *     tags: [Restaurants]
- *     parameters:
- *       - in: query
- *         name: city
- *         schema:
- *           type: string
- *         description: Filter by city
- *       - in: query
- *         name: category
- *         schema:
- *           type: string
- *         description: Filter by category
  *     responses:
  *       200:
  *         description: OK
