@@ -5,9 +5,9 @@ export interface IRestaurant {
     _id?: Types.ObjectId;
     profile: {
         name: string;
-        description?: string;
+        description: string;
         rating?: number;
-        category?: string[];
+        category: string[];
         timetable?: {
             monday?: [{ open: string, close: string }];
             tuesday?: [{ open: string, close: string }];
@@ -24,7 +24,7 @@ export interface IRestaurant {
         };
         location: {
             city: string;
-            address: string;
+            address?: string;
             googlePlaceId?: string;
             coordinates: {
                 type: { type: String, enum: ['Point'], default: 'Point' },
@@ -74,8 +74,8 @@ const restaurantSchema = new Schema<IRestaurant>(
                 city: { type: String, required: true },
                 address: { type: String, default: '' },
                 coordinates: {
-                    type: { type: String, enum: ['Point']},
-                    coordinates: { type: [Number], required: false }
+                    type: { type: String, enum: ['Point'], default: 'Point' },
+                    coordinates: { type: [Number], required: true }
                 }
             },
         },

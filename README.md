@@ -1,309 +1,141 @@
-# Express API — Mongoose + TypeScript In Depth
+# EASY-EAT API
 
-REST API built with **Node.js**, **Express**, **TypeScript**, and **Mongoose** that manages two main entities: `Organization` and `User`.
+## Descripció
 
----
-## AI
+L'API REST d'EASY-EAT és una aplicació backend desenvolupada amb Node.js, TypeScript i MongoDB per gestionar restaurants, clients, ressenyes, recompenses i visites. Aquesta API proporciona una plataforma completa per a aplicacions de gestió de restaurants i sistemes de fidelització de clients.
 
-  ChatGPT: users: Types.ObjectId[];
-           users: [{ type: Schema.Types.ObjectId, ref: 'User' }]
+## Característiques
 
-  Gemini:
-  const getOrganizationWithUsers = async (organizationId: string): Promise<IOrganizationModel | null> => {
-  return await Organization.findById(organizationId).populate('users', '-organization -password');
-  };
+- **Gestió de Restaurants**: Crear, llegir, actualitzar i eliminar restaurants amb informació detallada (horaris, categories, valoracions, etc.)
+- **Sistema de Clients**: Gestió completa de perfils de clients
+- **Ressenyes i Valoracions**: Permet als clients deixar ressenyes als restaurants
+- **Sistema de Recompenses**: Gestió de recompenses i punts de fidelització
+- **Seguiment de Visites**: Registre de visites dels clients als restaurants
+- **Documentació API**: Documentació interactiva amb Swagger UI
+- **Validació de Dades**: Validació robusta amb Joi
+- **Autenticació Segura**: Hashing de contrasenyes amb bcrypt
+- **Dades de Prova**: Sistema de seeding per poblar la base de dades amb dades d'exemple
 
-  const getOrganizationWithUsers = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-  const organization = await OrganizationService.getOrganizationWithUsers(req.params.id);
-  if (!organization) {
-  return res.status(404).json({ message: 'Organization not found' });
-  }
-  return res.status(200).json(organization);
-  }
-  catch (error) {
-  return res.status(500).json({ error });
-  }
-  };
+## Tecnologies Utilitzades
 
-[//]: # ()
-[//]: # (  /**)
+- **Node.js** - Entorn d'execució JavaScript
+- **TypeScript** - Superset de JavaScript amb tipat estàtic
+- **Express.js** - Framework web per Node.js
+- **MongoDB** - Base de dades NoSQL
+- **Mongoose** - ODM per MongoDB
+- **Swagger/OpenAPI** - Documentació d'API
+- **Joi** - Validació d'esquemes
+- **bcrypt** - Hashing de contrasenyes
+- **CORS** - Suport per Cross-Origin Resource Sharing
 
-[//]: # (  * @openapi)
+## Requisits previs
 
-[//]: # (    * /organizations/{id}/users:)
+- Node.js (versió 14 o superior)
+- MongoDB (local o en la núvol)
+- npm o yarn
 
-[//]: # (    *   get:)
+## Instal·lació
 
-[//]: # (    *     summary: Gets a single organization with populated users)
-
-[//]: # (    *     tags: [Organizations])
-
-[//]: # (    *     parameters:)
-
-[//]: # (    *       - in: path)
-
-[//]: # (    *         name: id)
-
-[//]: # (    *         required: true)
-
-[//]: # (    *         schema:)
-
-[//]: # (    *           type: string)
-
-[//]: # (    *         description: The organization's ObjectId)
-
-[//]: # (    *     responses:)
-
-[//]: # (    *       200:)
-
-[//]: # (    *         description: Returns the organization with populated users)
-
-[//]: # (    *         content:)
-
-[//]: # (    *           application/json:)
-
-[//]: # (    *             schema:)
-
-[//]: # (    *               $ref: '#/components/schemas/Organization')
-
-[//]: # (    *       404:)
-
-[//]: # (    *         description: Organization not found)
-
-[//]: # (  */)
-
-[//]: # (  router.get&#40;'/:id/users', controller.getOrganizationWithUsers&#41;;)
-
----
-
-## Technologies
-
-| Package | Version | Usage |
-|---|---|---|
-| express | ^4.17.3 | HTTP Framework |
-| mongoose | ^6.13.9 | ODM for MongoDB |
-| joi | ^17.6.0 | Schema validation in requests |
-| dotenv | ^16.0.0 | Environment variables |
-| cors | ^2.8.6 | Cross-origin access policy |
-| chalk | ^4.1.2 | Color logging in console |
-| typescript | ^4.5.5 | Static typing (devDependency) |
-
----
-
-## Project Structure
-
-```
-src/
-├── config/
-│   └── config.ts           # Environment variable configuration (Mongo + port)
-├── controllers/
-│   └── restaurant.ts
-│   └── customer.ts
-│   └── review.ts
-│   └── reward.ts
-│   └── visit.ts
-├── data/
-│   └── badges.json
-│   └── customers.json
-│   └── dishes.json
-│   └── employees.json
-│   └── pointsWallets.json
-│   └── restaurants.json
-│   └── reviews.json
-│   └── rewardRedemptions.json
-│   └── rewards.json
-│   └── statistics.json
-│   └── visits.json
-├── middleware/
-│   └── joi.ts                  # Payload validation with Joi + schemas for each entity
-├── models/
-│   └── badges.ts               # Mongoose Schema/Model for Badge
-│   └── customers.ts            # Mongoose Schema/Model for Customer
-│   └── dishes.ts               # Mongoose Schema/Model for Dish
-│   └── employees.ts            # Mongoose Schema/Model for Employee
-│   └── pointsWallets.ts        # Mongoose Schema/Model for PointsWallet
-│   └── restaurants.ts          # Mongoose Schema/Model for Restaurant
-│   └── reviews.ts              # Mongoose Schema/Model for Review
-│   └── rewardRedemptions.ts    # Mongoose Schema/Model for RewardRedemption
-│   └── rewards.ts              # Mongoose Schema/Model for Reward
-│   └── statistics.ts           # Mongoose Schema/Model for Statistic
-│   └── visits.ts               # Mongoose Schema/Model for Visit
-├── server.ts                   # Entry point: Mongo connection and server start
-├── swagger.ts                  # Swagger configuration
-├── library/
-│   └── logging.ts              # Logging utility with colors (INFO / WARN / ERROR)
-├── routes/
-│   └── restaurant.ts            # Express routes for Restaurant
-│   └── customer.ts              # Express routes for Customer
-│   └── review.ts                # Express routes for Review
-│   └── reward.ts                # Express routes for Reward
-│   └── visit.ts                 # Express routes for Visit
-├── services/
-│   └── restaurant.ts            # Business logic for Restaurant (DB calls)
-│   └── customer.ts              # Business logic for Customer (DB calls)
-│   └── review.ts                # Business logic for Review (DB calls)
-│   └── reward.ts                # Business logic for Reward (DB calls)
-│   └── visit.ts                 # Business logic for Visit (DB calls)
-├── utils/
-│   └── dataSeeder.ts            # Utility to load JSON data into MongoDB
-│   └── recomendation.ts         # Utility to generate restaurant recommendations based on user visits and reviews
-│   └── servicePeriod.ts         #             
-
+1. Clona el repositori:
+```bash
+git clone <url-del-repositori>
+cd EA-easyeat-backend2
 ```
 
----
+2. Instal·la les dependències:
+```bash
+npm install
+```
 
-## File Descriptions
-
-### `src/server.ts`
-Application entry point. It is responsible for:
-1. Connecting to MongoDB using Mongoose.
-2. If the connection is successful, it starts the HTTP server.
-3. Registers global middlewares: request/response logging, CORS, body parsers.
-4. Mounts routes under the prefixes `/organizations` and `/users`.
-5. Exposes a healthcheck at `GET /ping`.
-6. Manages 404 responses for non-existent routes.
-
----
-
-### `src/config/config.ts`
-Reads environment variables using `dotenv` and exports the `config` object with two sections:
-- `mongo.url` — MongoDB connection URI.
-- `server.port` — HTTP server port (default `1337`).
-
----
-
-### `src/library/logging.ts`
-Static class `Logging` with three console output methods, each with a different color thanks to `chalk`:
-| Method | Color | Usage |
-|---|---|---|
-| `Logging.info()` | Blue | General information |
-| `Logging.warning()` | Yellow | Warnings |
-| `Logging.error()` | Red | Errors |
-
----
-
-### `src/middleware/joi.ts`
-Contains two exports:
-
-- **`ValidateJoi(schema)`** — Higher-order middleware that receives a Joi schema, validates `req.body`, and, if it fails, returns `422 Unprocessable Entity`.
-- **`Schemas`** — Object with validation schemas for each entity:
-  - `Schemas.organization.create` / `.update` → validates `{ name: string }`.
-  - `Schemas.user.create` / `.update` → validates `{ name: string, email: string, password: string (min 6), organization: ObjectId (24 hex) }`.
-
----
-
-### `src/models/restaurant.ts`
-Defines the Mongoose model `Organization` with the following structure:
-
-| Field | Type | Required |
-|---|---|---|
-| `_id` | ObjectId | Yes (auto) |
-| `name` | String | Yes |
-
-Exported TypeScript interfaces: `IOrganization`, `IOrganizationModel`.
-
----
-
-### `src/models/user.ts`
-Defines the Mongoose model `User` with the following structure:
-
-| Field | Type | Required | Notes |
-|---|---|---|---|
-| `_id` | ObjectId | Yes (auto) | |
-| `name` | String | Yes | |
-| `email` | String | Yes | Unique |
-| `password` | String | Yes | |
-| `organization` | ObjectId | Yes | Reference to `Organization` |
-| `createdAt` | Date | Auto | Generated by `timestamps: true` |
-| `updatedAt` | Date | Auto | Generated by `timestamps: true` |
-
-Exported TypeScript interfaces: `IUser`, `IUserModel`.
-
----
-
-### `src/services/restaurant.ts` and `src/services/user.ts`
-Contain the **business logic** and direct calls to Mongoose. This is the layer responsible for interacting with data persistence.
-
----
-
-### `src/controllers/restaurant.ts` and `src/controllers/user.ts`
-Manage the HTTP protocol. They receive data from the `Request`, call the corresponding **Service** layer, and return the response in the `Response` with the appropriate status code. They do not know the implementation details of the database.
-
----
-
-### `src/routes/restaurant.ts` and `src/routes/user.ts`
-Register the endpoints for each resource with their corresponding Joi validation middlewares and delegate the logic to the controller.
-
----
-
-## MongoDB Configuration
-
-Create a `.env` file in the project root with the following content:
-
+3. Configura les variables d'entorn:
+Crea un fitxer `.env` a l'arrel del projecte amb les següents variables:
 ```env
-MONGO_URI="mongodb://localhost:27017/sem1"
-SERVER_PORT="1337"
+MONGO_URI=mongodb://localhost:27017/easyeat
+SERVER_PORT=1337
 ```
 
-The critical variable is `MONGO_URI`. The database used by default is **`sem1`**.
+4. Compila el projecte:
+```bash
+npm run build
+```
 
----
+## Ús
 
-## API Endpoints
-
-The server runs at `http://localhost:1337` by default. Interactive documentation is available at `/api`.
-
-### General
-
-| Method | URL | Description |
-|---|---|---|
-| `GET` | `/ping` | Healthcheck — returns `{ "hello": "world" }` |
-
----
-
-### Organizations — `/organizations`
-
-| Method | URL | Body (JSON) | Validation | Description | Success Response |
-|---|---|---|---|---|---|
-| `POST` | `/` | `{ "name": "string" }` | Joi required | Creates a new organization | `201` |
-| `GET` | `/` | — | — | Lists all organizations | `200` |
-| `GET` | `/:organizationId` | — | — | Gets an organization by ID | `200` |
-| `PUT` | `/:organizationId` | `{ "name": "string" }` | Joi required | Updates an organization's name | `201` |
-| `DELETE` | `/:organizationId` | — | — | Deletes an organization by ID | `201` |
-
----
-
-### Users — `/users`
-
-| Method | URL | Body (JSON) | Validation | Description | Success Response |
-|---|---|---|---|---|---|
-| `POST` | `/` | `{ "name": string, "email": string, "password": password, "organization": "ObjectId" }` | Joi required | Creates a new user | `201` |
-| `GET` | `/` | — | — | Lists all users | `200` |
-| `GET` | `/:userId` | — | — | Gets a user by ID (with organization populate) | `200` |
-| `PUT` | `/:userId` | `{ "name": string, ... }` | Joi required | Updates a user's data | `201` |
-| `DELETE` | `/:userId` | — | — | Deletes a user by ID | `201` |
-
----
-
-## 🎓 Seminar Exercise
-
-In the `seminar-exercise/` folder, you will find educational material on how to implement relationships between models in Mongoose (Manual vs Virtuals).
-
----
-
-## Installation and Execution
+### Iniciar el servidor
 
 ```bash
-# Install dependencies
-npm install
-
-# Start the server
 npm start
 ```
 
-To compile manually:
-```bash
-npx tsc
+El servidor s'iniciarà al port especificat (per defecte 1337) i es connectarà automàticament a MongoDB. També poblarà la base de dades amb dades d'exemple.
+
+### Endpoints principals
+
+- **Restaurants**: `/restaurants`
+- **Ressenyes**: `/reviews`
+- **Clients**: `/customer`
+- **Recompenses**: `/rewards`
+- **Visites**: `/visits`
+
+### Documentació API
+
+Accedeix a la documentació interactiva de l'API a:
 ```
+http://localhost:1337/api
+```
+
+### Health Check
+
+Pots verificar que el servidor estigui funcionant correctament amb:
+```
+GET http://localhost:1337/ping
+```
+
+## Estructura del Projecte
+
+```
+EA-easyeat-backend2/
+├── src/
+│   ├── config/          # Configuració de l'aplicació
+│   ├── controllers/     # Controladors de l'API
+│   ├── models/          # Models de Mongoose
+│   ├── routes/          # Definició de rutes
+│   ├── services/        # Lògica de negoci
+│   ├── middleware/      # Middleware personalitzat
+│   ├── utils/           # Utilitats (seeding, recomanacions, etc.)
+│   ├── data/            # Dades JSON per seeding
+│   ├── library/         # Utilitats compartides (logging)
+│   ├── server.ts        # Punt d'entrada de l'aplicació
+│   └── swagger.ts       # Configuració de Swagger
+├── build/               # Fitxers compilats (generats automàticament)
+├── package.json
+├── tsconfig.json
+└── README.md
+```
+
+## Scripts disponibles
+
+- `npm run build` - Compila el projecte TypeScript
+- `npm start` - Inicia el servidor en mode producció
+- `npm run postinstall` - S'executa automàticament després de `npm install`
+
+## Desenvolupament
+
+Per desenvolupar amb recàrrega automàtica, pots utilitzar eines com `nodemon` o `ts-node-dev`. Assegura't de tenir MongoDB en funcionament localment o configura la URI de connexió adequada.
+
+## Contribució
+
+1. Fork el projecte
+2. Crea una branca per la teva funcionalitat (`git checkout -b feature/nova-funcionalitat`)
+3. Commit els teus canvis (`git commit -m 'Afegeix nova funcionalitat'`)
+4. Push a la branca (`git push origin feature/nova-funcionalitat`)
+5. Obre un Pull Request
+
+## Llicència
+
+Aquest projecte està sota la llicència MIT.
+
+## Autor
+
+Desenvolupat com a part del projecte d'Enginyeria d'Aplicacions.</content>
+<parameter name="filePath">
