@@ -59,8 +59,8 @@ const StartServer = () => {
     router.use('/restaurants', restaurantRoutes);
     router.use('/reviews', reviewRoutes);
     router.use('/customer', customerRoutes);
-    router.use('/reward', rewardRoutes)
-    router.use('/visit', visitRoutes)
+    router.use('/rewards', rewardRoutes)
+    router.use('/visits', visitRoutes)
 
     /** Healthcheck */
     router.get('/ping', (req, res, next) => res.status(200).json({ hello: 'world' }));

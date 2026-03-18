@@ -16,6 +16,7 @@ import Logging from '../library/logging';
 export const ValidateJoi = (schema: ObjectSchema) => {
     return async (req: Request, res: Response, next: NextFunction) => {
         try {
+            console.log("BODY RECIBIDO:", JSON.stringify(req.body));
             await schema.validateAsync(req.body);
 
             next();
