@@ -97,14 +97,58 @@ GET http://localhost:1337/ping
 EA-easyeat-backend2/
 ├── src/
 │   ├── config/          # Configuració de l'aplicació
-│   ├── controllers/     # Controladors de l'API
+│   │   └── config.ts
+│   ├── controllers/     # Controladors de l'APIç
+│   │   └── restaurant.ts
+│   │   └── review.ts
+│   │   └── customer.ts
+│   │   └── reward.ts
+│   │   └── visit.ts
 │   ├── models/          # Models de Mongoose
+│   │   ├─── restaurant.ts
+│   │   ├─── review.ts
+│   │   ├─── customer.ts
+│   │   ├─── reward.ts
+│   │   ├─── visit.ts
+│   │   ├─── badge.ts
+│   │   ├─── dish.ts
+│   │   ├─── rewardRedemption.ts
+│   │   ├─── statistics.ts
+│   │   ├─── pointsWallet.ts
+│   │   └─── employee.ts
 │   ├── routes/          # Definició de rutes
+│   │   ├─── restaurant.ts
+│   │   ├─── review.ts
+│   │   ├─── customer.ts
+│   │   ├─── reward.ts
+│   │   └─── visit.ts
 │   ├── services/        # Lògica de negoci
+│   │   ├─── restaurant.ts
+│   │   ├─── review.ts
+│   │   ├─── customer.ts
+│   │   ├─── reward.ts
+│   │   └─── visit.ts
 │   ├── middleware/      # Middleware personalitzat
+│   │   └── joi.ts
 │   ├── utils/           # Utilitats (seeding, recomanacions, etc.)
+│   │   ├─── dataSeeder.ts
+│   │   ├─── recommendation.ts
+│   │   ├─── softDelete.ts
+│   │   └── servicePeriod.ts
 │   ├── data/            # Dades JSON per seeding
+│   │   ├─── restaurant.json
+│   │   ├─── review.json
+│   │   ├─── customer.json
+│   │   ├─── reward.json
+│   │   ├─── visit.json
+│   │   ├─── badge.json
+│   │   ├─── dish.json
+│   │   ├─── rewardRedemption.json
+│   │   ├─── statistics.json
+│   │   ├─── pointsWallet.json
+│   │   └─── employee.json
 │   ├── library/         # Utilitats compartides (logging)
+│   │   └── logging.ts
 │   ├── server.ts        # Punt d'entrada de l'aplicació
 │   └── swagger.ts       # Configuració de Swagger
 ├── build/               # Fitxers compilats (generats automàticament)
