@@ -223,44 +223,126 @@ router.get('/', controller.readAll);
 
 /**
  * @openapi
- * /restaurants/nearby:
+ * /restaurants/filter:
  *   get:
- *     summary: Gets restaurants near a location (geospatial query)
+ *     summary: Gets a filtered list of restaurants
  *     tags: [Restaurants]
  *     parameters:
  *       - in: query
  *         name: lng
- *         required: true
  *         schema:
  *           type: number
- *         description: Longitude
+ *         description: User longitude (required if lat is provided)
  *         example: 2.1734
  *       - in: query
  *         name: lat
- *         required: true
  *         schema:
  *           type: number
- *         description: Latitude
+ *         description: User latitude (required if lng is provided)
  *         example: 41.3851
  *       - in: query
- *         name: maxDistance
+ *         name: radiusMeters
  *         schema:
  *           type: number
- *         description: Max distance in meters (default 5000)
- *         example: 2000
+ *           default: 5000
+ *         description: Search radius in metres (only used when lng/lat are provided)
+ *         example: 3000
+ *       - in: query
+ *         name: categories
+ *         schema:
+ *           type: string
+ *         description: Comma-separated list of categories (must match schema enum)
+ *         example: "Italià,Sushi"
+ *       - in: query
+ *         name: minRating
+ *         schema:
+ *           type: number
+ *           minimum: 0
+ *           maximum: 10
+ *         description: Minimum rating (inclusive)
+ *         example: 7
+ *       - in: query
+ *         name: city
+ *         schema:
+ *           type: string
+ *         description: Filter by city name (case-insensitive)
+ *         example: "Barcelona"
+ *       - in: query
+ *         name: openNow
+ *         schema:
+ *           type: boolean
+ *           default: false
+ *         description: If true, returns only restaurants open at the current time
+ *         example: true
+ *       - in: query
+ *         name: openAt
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *         description: ISO datetime — returns restaurants open at this specific time (overrides openNow)
+ *         example: "2025-06-14T20:30:00"
  *     responses:
  *       200:
- *         description: List of nearby restaurants
+ *         description: List of matching restaurants, sorted by distance (if geo) or rating
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/Restaurant'
- *       400:
- *         description: Missing or invalid coordinates
+ *                 allOf:
+ *                   - $ref: '#/components/schemas/Restaurant'
+ *                   - type: object
+ *                     properties:
+ *                       distance:
+ *                         type: number
+ *                         description: Distance in metres from the provided coordinates (only present when lng/lat are given)
+ *                         example: 842.5
+ *       500:
+ *         description: Internal server error
  */
-router.get('/nearby', controller.getNearby);
+router.get('/filter', controller.getFiltered);
+
+
+// /**
+//  * @openapi
+//  * /restaurants/nearby:
+//  *   get:
+//  *     summary: Gets restaurants near a location (geospatial query)
+//  *     tags: [Restaurants]
+//  *     parameters:
+//  *       - in: query
+//  *         name: lng
+//  *         required: true
+//  *         schema:
+//  *           type: number
+//  *         description: Longitude
+//  *         example: 2.1734
+//  *       - in: query
+//  *         name: lat
+//  *         required: true
+//  *         schema:
+//  *           type: number
+//  *         description: Latitude
+//  *         example: 41.3851
+//  *       - in: query
+//  *         name: maxDistance
+//  *         schema:
+//  *           type: number
+//  *         description: Max distance in meters (default 5000)
+//  *         example: 2000
+//  *     responses:
+//  *       200:
+//  *         description: List of nearby restaurants
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               type: array
+//  *               items:
+//  *                 $ref: '#/components/schemas/Restaurant'
+//  *       400:
+//  *         description: Missing or invalid coordinates
+//  */
+// router.get('/nearby', controller.getNearby);
 
 /**
  * @openapi

@@ -94,6 +94,17 @@ const restaurantSchema = new Schema<IRestaurant>(
 );
 
 // Uncomment once coordinates are always provided and valid:
-// restaurantSchema.index({ "profile.location.coordinates": "2dsphere" }, { sparse: true });
+// Geospatial — required for $geoNear / $near
+restaurantSchema.index(
+    { 'profile.location.coordinates': '2dsphere' },
+    { sparse: true }
+);
+
+// Compound — covers the most common filter combos
+restaurantSchema.index({
+    'profile.rating':       -1,
+    'profile.category':      1,
+    'profile.location.city': 1,
+});
 
 export const RestaurantModel = model<IRestaurant>("Restaurant", restaurantSchema);

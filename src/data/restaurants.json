@@ -55,7 +55,7 @@
       "name": "Tokyo Ramen House",
       "description": "Authentic Japanese ramen, crafted with 20-hour broth.",
       "rating": 4.5,
-      "category": ["Japonès", "Ramen"],
+      "category": ["Japonès", "Ramen", "Sushi"],
       "timetable": {
         "tuesday": [{ "open": "12:00", "close": "15:00" }, { "open": "19:00", "close": "22:30" }],
         "wednesday": [{ "open": "12:00", "close": "15:00" }, { "open": "19:00", "close": "22:30" }],

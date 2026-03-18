@@ -103,6 +103,25 @@ const getStatistics = async (req: Request, res: Response, next: NextFunction) =>
     }
 };
 
+const getFiltered = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { lng, lat, radiusMeters, categories, minRating, city, openNow, openAt } = req.query;
+        const results = await RestaurantService.getFilteredRestaurants({
+            lng:          lng          ? parseFloat(lng as string)          : undefined,
+            lat:          lat          ? parseFloat(lat as string)          : undefined,
+            radiusMeters: radiusMeters ? parseFloat(radiusMeters as string) : undefined,
+            categories:   categories   ? (categories as string).split(',')  : undefined,
+            minRating:    minRating    ? parseFloat(minRating as string)    : undefined,
+            city:         city         ? (city as string)                   : undefined,
+            openNow:      openNow      === 'true',
+            openAt:       openAt       ? (openAt as string)                 : undefined,
+        });
+        return res.status(200).json(results);
+    } catch (error) {
+        return res.status(500).json({ error });
+    }
+};
+
 export default {
     createRestaurant,
     readRestaurant,
@@ -113,5 +132,6 @@ export default {
     getRestaurantFull,
     getNearby,
     getBadges,
-    getStatistics
+    getStatistics,
+    getFiltered
 };
