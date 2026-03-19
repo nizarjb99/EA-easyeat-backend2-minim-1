@@ -33,36 +33,26 @@ const router = express.Router();
  *       properties:
  *         _id:
  *           type: string
- *           example: "65f1c2a1b2c3d4e5f6789011"
  *         customer_id:
  *           type: string
  *           description: Customer ObjectId
- *           example: "65f1c2a1b2c3d4e5f6789012"
  *         restaurant_id:
  *           type: string
  *           description: Restaurant ObjectId
- *           example: "65f1c2a1b2c3d4e5f6789013"
  *         date:
  *           type: string
  *           format: date
- *           example: "2025-03-10"
+ *         rating:
+ *           type: number
+ *           example: 9
  *         ratings:
  *           $ref: '#/components/schemas/Ratings'
  *         comment:
  *           type: string
  *           example: "Amazing food!"
- *         photos:
- *           type: array
- *           items:
- *             type: string
- *           example:
- *             - "https://example.com/photo1.jpg"
  *         likes:
  *           type: number
  *           example: 10
- *         extraPoints:
- *           type: number
- *           example: 5
  *
  *     ReviewCreateUpdate:
  *       type: object
@@ -70,6 +60,7 @@ const router = express.Router();
  *         - customer_id
  *         - restaurant_id
  *         - date
+ *         - rating
  *       properties:
  *         customer_id:
  *           type: string
@@ -78,20 +69,18 @@ const router = express.Router();
  *         date:
  *           type: string
  *           format: date
+ *         rating:
+ *           type: number
+ *           minimum: 1
+ *           maximum: 10
  *         ratings:
  *           $ref: '#/components/schemas/Ratings'
  *         comment:
  *           type: string
- *         photos:
- *           type: array
- *           items:
- *             type: string
  *         likes:
  *           type: number
- *         extraPoints:
- *           type: number
+ *           example: 10
  */
-
 
 /**
  * @openapi
@@ -109,32 +98,9 @@ const router = express.Router();
  *       201:
  *         description: Created
  *       422:
- *         description: Validation failed (Joi)
+ *         description: Validation error
  */
 router.post('/', ValidateJoi(Schemas.review.create), controller.createReview);
-
-
-/**
- * @openapi
- * /reviews/{reviewId}:
- *   get:
- *     summary: Gets a review by ID
- *     tags: [Reviews]
- *     parameters:
- *       - in: path
- *         name: reviewId
- *         required: true
- *         schema:
- *           type: string
- *         description: The review ObjectId
- *     responses:
- *       200:
- *         description: OK
- *       404:
- *         description: Not found
- */
-router.get('/:reviewId', controller.readReview);
-
 
 /**
  * @openapi
@@ -144,16 +110,35 @@ router.get('/:reviewId', controller.readReview);
  *     tags: [Reviews]
  *     responses:
  *       200:
- *         description: OK
+ *         description: List of reviews
  */
 router.get('/', controller.readAll);
 
+/**
+ * @openapi
+ * /reviews/{reviewId}:
+ *   get:
+ *     summary: Get review by ID
+ *     tags: [Reviews]
+ *     parameters:
+ *       - in: path
+ *         name: reviewId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Review found
+ *       404:
+ *         description: Not found
+ */
+router.get('/:reviewId', controller.readReview);
 
 /**
  * @openapi
  * /reviews/{reviewId}:
  *   put:
- *     summary: Updates a review by ID
+ *     summary: Update review
  *     tags: [Reviews]
  *     parameters:
  *       - in: path
@@ -161,29 +146,19 @@ router.get('/', controller.readAll);
  *         required: true
  *         schema:
  *           type: string
- *         description: The review ObjectId
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/ReviewCreateUpdate'
  *     responses:
- *       201:
+ *       200:
  *         description: Updated
  *       404:
  *         description: Not found
- *       422:
- *         description: Validation failed
  */
 router.put('/:reviewId', ValidateJoi(Schemas.review.update), controller.updateReview);
-
 
 /**
  * @openapi
  * /reviews/{reviewId}:
  *   delete:
- *     summary: Deletes a review by ID
+ *     summary: Delete review
  *     tags: [Reviews]
  *     parameters:
  *       - in: path
@@ -191,10 +166,9 @@ router.put('/:reviewId', ValidateJoi(Schemas.review.update), controller.updateRe
  *         required: true
  *         schema:
  *           type: string
- *         description: The review ObjectId
  *     responses:
  *       200:
- *         description: OK
+ *         description: Deleted
  *       404:
  *         description: Not found
  */
@@ -204,18 +178,35 @@ router.delete('/:reviewId', controller.deleteReview);
  * @openapi
  * /reviews/restaurant/{restaurantId}:
  *   get:
- *     summary: Get all reviews for a restaurant
+ *     summary: Get reviews by restaurant
  *     tags: [Reviews]
+ *     parameters:
+ *       - in: path
+ *         name: restaurantId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of reviews
  */
- router.get('/restaurant/:restaurantId', controller.readByRestaurant);
-
+router.get('/restaurant/:restaurantId', controller.readByRestaurant);
 
 /**
  * @openapi
  * /reviews/customer/{customerId}:
  *   get:
- *     summary: Get all reviews by a customer
+ *     summary: Get reviews by customer
  *     tags: [Reviews]
+ *     parameters:
+ *       - in: path
+ *         name: customerId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of reviews
  */
 router.get('/customer/:customerId', controller.readByCustomer);
 
@@ -223,10 +214,20 @@ router.get('/customer/:customerId', controller.readByCustomer);
  * @openapi
  * /reviews/{reviewId}/like:
  *   post:
- *     summary: Adds a like to a review
+ *     summary: Add like to review
  *     tags: [Reviews]
+ *     parameters:
+ *       - in: path
+ *         name: reviewId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Like added
+ *       404:
+ *         description: Not found
  */
 router.post('/:reviewId/like', controller.likeReview);
-
 
 export default router;

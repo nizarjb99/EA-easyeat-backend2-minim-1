@@ -1,99 +1,112 @@
 import { NextFunction, Request, Response } from 'express';
 import ReviewService from '../services/review';
 
+// Crear review
 const createReview = async (req: Request, res: Response, next: NextFunction) => {
-
     try {
+        const { customer_id, restaurant_id, rating } = req.body;
+
+        if (!customer_id || !restaurant_id || !rating) {
+            return res.status(400).json({ message: 'Missing required fields' });
+        }
+
         const savedReview = await ReviewService.createReview(req.body);
         return res.status(201).json(savedReview);
+
     } catch (error) {
-        return res.status(500).json({ error });
+        return next(error);
     }
 };
 
+// Obtener una review por ID
 const readReview = async (req: Request, res: Response, next: NextFunction) => {
-    const reviewId = req.params.reviewId;
-
     try {
-        const review = await ReviewService.getReview(reviewId);
+        const review = await ReviewService.getReview(req.params.reviewId);
+
         return review
             ? res.status(200).json(review)
-            : res.status(404).json({ message: 'not found' });
+            : res.status(404).json({ message: 'Review not found' });
+
     } catch (error) {
-        return res.status(500).json({ error });
+        return next(error);
     }
 };
 
+// Obtener todas las reviews
 const readAll = async (req: Request, res: Response, next: NextFunction) => {
-
     try {
         const reviews = await ReviewService.getAllReviews();
         return res.status(200).json(reviews);
+
     } catch (error) {
-        return res.status(500).json({ error });
+        return next(error);
     }
 };
 
+// Actualizar review
 const updateReview = async (req: Request, res: Response, next: NextFunction) => {
-    const reviewId = req.params.reviewId;
-
     try {
-        const updatedReview = await ReviewService.updateReview(reviewId, req.body);
+        const updatedReview = await ReviewService.updateReview(
+            req.params.reviewId,
+            req.body
+        );
+
         return updatedReview
-            ? res.status(201).json(updatedReview)
-            : res.status(404).json({ message: 'not found' });
+            ? res.status(200).json(updatedReview)
+            : res.status(404).json({ message: 'Review not found' });
+
     } catch (error) {
-        return res.status(500).json({ error });
+        return next(error);
     }
 };
 
+// Eliminar review
 const deleteReview = async (req: Request, res: Response, next: NextFunction) => {
-    const reviewId = req.params.reviewId;
-
     try {
-        const review = await ReviewService.deleteReview(reviewId);
-        return review
-            ? res.status(201).json(review)
-            : res.status(404).json({ message: 'not found' });
+        const deleted = await ReviewService.deleteReview(req.params.reviewId);
+
+        return deleted
+            ? res.status(200).json({ message: 'Review deleted' })
+            : res.status(404).json({ message: 'Review not found' });
+
     } catch (error) {
-        return res.status(500).json({ error });
+        return next(error);
     }
 };
 
+// Obtener reviews por restaurante
 const readByRestaurant = async (req: Request, res: Response, next: NextFunction) => {
-    const restaurantId = req.params.restaurantId;
-
     try {
-        const reviews = await ReviewService.getReviewsByRestaurant(restaurantId);
+        const reviews = await ReviewService.getReviewsByRestaurant(req.params.restaurantId);
         return res.status(200).json(reviews);
+
     } catch (error) {
-        return res.status(500).json({ error });
+        return next(error);
     }
 };
 
+// Obtener reviews por cliente
 const readByCustomer = async (req: Request, res: Response, next: NextFunction) => {
-    const customerId = req.params.customerId;
-
     try {
-        const reviews = await ReviewService.getReviewsByCustomer(customerId);
+        const reviews = await ReviewService.getReviewsByCustomer(req.params.customerId);
         return res.status(200).json(reviews);
+
     } catch (error) {
-        return res.status(500).json({ error });
+        return next(error);
     }
 };
 
+// Dar like a una review
 const likeReview = async (req: Request, res: Response, next: NextFunction) => {
-    const reviewId = req.params.reviewId;
-
     try {
-        const review = await ReviewService.likeReview(reviewId);
+        const review = await ReviewService.likeReview(req.params.reviewId);
 
         return review
             ? res.status(200).json(review)
-            : res.status(404).json({ message: 'not found' });
+            : res.status(404).json({ message: 'Review not found' });
 
     } catch (error) {
-        return res.status(500).json({ error });
+        return next(error);
     }
 };
 

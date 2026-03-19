@@ -1,8 +1,9 @@
 [
   {
-    "customer_id": "65f1c2a1b2c3d4e5f6789051",
-    "restaurant_id": "65f1c2a1b2c3d4e5f6789001",
-    "date": "2024-06-14T21:30:00.000Z",
+    "customer_id": { "$oid": "69bb1c624864d09fa0540c6d" },
+    "restaurant_id": { "$oid": "69bb1c624864d09fa0540c7e" },
+    "date": { "$date": "2024-06-14T21:30:00.000Z" },
+    "rating": 9,
     "ratings": {
       "foodQuality": 9,
       "staffService": 8,
@@ -10,35 +11,26 @@
       "environment": 9
     },
     "comment": "Absolutely incredible paella! The staff were attentive and the view of the sea was breathtaking. Will definitely come back.",
-    "photos": [
-      "https://cdn.example.com/reviews/review1_photo1.jpg",
-      "https://cdn.example.com/reviews/review1_photo2.jpg"
-    ],
-    "likes": 14,
-    "extraPoints": 50,
-    "createdAt": "2024-06-14T21:35:00.000Z",
-    "updatedAt": "2024-06-15T08:00:00.000Z"
+    "likes": 14
   },
   {
-    "customer_id": "65f1c2a1b2c3d4e5f6789052",
-    "restaurant_id": "65f1c2a1b2c3d4e5f6789001",
-    "date": "2024-05-20T20:00:00.000Z",
+    "customer_id": { "$oid": "69bb1c624864d09fa0540c6d" },
+    "restaurant_id": { "$oid": "69bb1c624864d09fa0540c8c" },
+    "date": { "$date": "2024-05-20T20:00:00.000Z" },
+    "rating": 7,
     "ratings": {
       "foodQuality": 7,
       "staffService": 6,
       "cleanliness": 8
     },
     "comment": "Good food but service was a bit slow on a Saturday night. Understandable given how busy it was.",
-    "photos": [],
-    "likes": 3,
-    "extraPoints": 0,
-    "createdAt": "2024-05-20T20:15:00.000Z",
-    "updatedAt": "2024-05-20T20:15:00.000Z"
+    "likes": 3
   },
   {
-    "customer_id": "65f1c2a1b2c3d4e5f6789051",
-    "restaurant_id": "65f1c2a1b2c3d4e5f6789002",
-    "date": "2024-04-10T13:00:00.000Z",
+    "customer_id": { "$oid": "69bb1c624864d09fa0540c6e" },
+    "restaurant_id": { "$oid": "69bb1c624864d09fa0540c8c" },
+    "date": { "$date": "2024-04-10T13:00:00.000Z" },
+    "rating": 9,
     "ratings": {
       "foodQuality": 10,
       "staffService": 10,
@@ -46,10 +38,6 @@
       "environment": 8
     },
     "comment": "Best tonkotsu ramen I've had outside of Japan. The egg was perfectly marinated.",
-    "photos": ["https://cdn.example.com/reviews/ramen_review.jpg"],
-    "likes": 27,
-    "extraPoints": 75,
-    "createdAt": "2024-04-10T13:10:00.000Z",
-    "updatedAt": "2024-04-12T10:00:00.000Z"
+    "likes": 27
   }
 ]

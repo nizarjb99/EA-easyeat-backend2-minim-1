@@ -153,36 +153,34 @@ export const Schemas = {
         })
     },
 
-    review: {
-        create: Joi.object<IReview>({
-            customer_id:   objectId.required(),
-            restaurant_id: objectId.required(),
-            date:          Joi.date().required(),
-            ratings: Joi.object({
-                foodQuality:  Joi.number().min(0).max(10),
-                staffService: Joi.number().min(0).max(10),
-                cleanliness:  Joi.number().min(0).max(10),
-                environment:  Joi.number().min(0).max(10)
-            }),
-            comment:     Joi.string(),
-            photos:      Joi.array().items(Joi.string().uri()),
-            likes:       Joi.number().min(0).default(0),
-            extraPoints: Joi.number().min(0).default(0)
+review: {
+    create: Joi.object<IReview>({
+        customer_id: objectId.required(),
+        restaurant_id: objectId.required(),
+        date: Joi.date().required(),
+        rating: Joi.number().min(1).max(10).required(),
+        ratings: Joi.object({
+            foodQuality: Joi.number().min(0).max(10),
+            staffService: Joi.number().min(0).max(10),
+            cleanliness: Joi.number().min(0).max(10),
+            environment: Joi.number().min(0).max(10)
         }),
-        update: Joi.object<IReview>({
-            date: Joi.date(),
-            ratings: Joi.object({
-                foodQuality:  Joi.number().min(0).max(10),
-                staffService: Joi.number().min(0).max(10),
-                cleanliness:  Joi.number().min(0).max(10),
-                environment:  Joi.number().min(0).max(10)
-            }),
-            comment:     Joi.string(),
-            photos:      Joi.array().items(Joi.string().uri()),
-            likes:       Joi.number().min(0),
-            extraPoints: Joi.number().min(0)
-        })
-    },
+        comment: Joi.string().allow(''),
+        likes: Joi.number().min(0).default(0)
+    }),
+    update: Joi.object<IReview>({
+        date: Joi.date(),
+        rating: Joi.number().min(1).max(10),
+        ratings: Joi.object({
+            foodQuality: Joi.number().min(0).max(10),
+            staffService: Joi.number().min(0).max(10),
+            cleanliness: Joi.number().min(0).max(10),
+            environment: Joi.number().min(0).max(10)
+        }),
+        comment: Joi.string().allow(''),
+        likes: Joi.number().min(0)
+    })
+},
 
     reward: {
         create: Joi.object<IReward>({
