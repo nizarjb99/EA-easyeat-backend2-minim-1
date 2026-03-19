@@ -69,7 +69,6 @@ const getReviewsByCustomer = async (customerId: string): Promise<IReview[]> => {
             select: 'profile.name'
         })
         .lean();
-
     return reviews.map((r: any) => ({
         ...r,
         restaurant_id: {
@@ -78,6 +77,7 @@ const getReviewsByCustomer = async (customerId: string): Promise<IReview[]> => {
         }
     }));
 };
+;
 
 // Dar like
 const likeReview = async (reviewId: string): Promise<IReview | null> => {
