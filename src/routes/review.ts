@@ -59,7 +59,6 @@ const router = express.Router();
  *       required:
  *         - customer_id
  *         - restaurant_id
- *         - date
  *         - rating
  *       properties:
  *         customer_id:
@@ -113,6 +112,58 @@ router.post('/', ValidateJoi(Schemas.review.create), controller.createReview);
  *         description: List of reviews
  */
 router.get('/', controller.readAll);
+
+/**
+ * @openapi
+ * /reviews/restaurant/{restaurantId}:
+ *   get:
+ *     summary: Get reviews by restaurant
+ *     tags: [Reviews]
+ *     parameters:
+ *       - in: path
+ *         name: restaurantId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of reviews
+ */
+router.get('/restaurant/:restaurantId', controller.readByRestaurant);
+
+/**
+ * @openapi
+ * /reviews/customer/{customerId}:
+ *   get:
+ *     summary: Get reviews by customer
+ *     tags: [Reviews]
+ *     parameters:
+ *       - in: path
+ *         name: customerId
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: skip
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: minRating
+ *         schema:
+ *           type: number
+ *       - in: query
+ *         name: sortByLikes
+ *         schema:
+ *           type: boolean
+ *     responses:
+ *       200:
+ *         description: List of reviews
+ */
+router.get('/customer/:customerId', controller.readByCustomer);
 
 /**
  * @openapi
@@ -173,42 +224,6 @@ router.put('/:reviewId', ValidateJoi(Schemas.review.update), controller.updateRe
  *         description: Not found
  */
 router.delete('/:reviewId', controller.deleteReview);
-
-/**
- * @openapi
- * /reviews/restaurant/{restaurantId}:
- *   get:
- *     summary: Get reviews by restaurant
- *     tags: [Reviews]
- *     parameters:
- *       - in: path
- *         name: restaurantId
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: List of reviews
- */
-router.get('/restaurant/:restaurantId', controller.readByRestaurant);
-
-/**
- * @openapi
- * /reviews/customer/{customerId}:
- *   get:
- *     summary: Get reviews by customer
- *     tags: [Reviews]
- *     parameters:
- *       - in: path
- *         name: customerId
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: List of reviews
- */
-router.get('/customer/:customerId', controller.readByCustomer);
 
 /**
  * @openapi

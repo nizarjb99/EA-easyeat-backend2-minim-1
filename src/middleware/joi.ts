@@ -177,7 +177,8 @@ export const Schemas = {
         create: Joi.object<IReview>({
             customer_id:   objectId.required(),
             restaurant_id: objectId.required(),
-            date:          Joi.date().required(),
+            // date is optional — model defaults to Date.now
+            date:          Joi.date().default(() => new Date()),
             rating:        Joi.number().min(1).max(10).required(),
             ratings: Joi.object({
                 foodQuality:  Joi.number().min(0).max(10),

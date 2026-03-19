@@ -4,12 +4,6 @@ import ReviewService from '../services/review';
 // Crear review
 const createReview = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { customer_id, restaurant_id, rating } = req.body;
-
-        if (!customer_id || !restaurant_id || !rating) {
-            return res.status(400).json({ message: 'Missing required fields' });
-        }
-
         const savedReview = await ReviewService.createReview(req.body);
         return res.status(201).json(savedReview);
 
@@ -86,24 +80,30 @@ const readByRestaurant = async (req: Request, res: Response, next: NextFunction)
 };
 
 // Obtener reviews por cliente
-const readByCustomer = async (req: Request, res: Response) => {
-  const { customerId } = req.params;
+const readByCustomer = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { customerId } = req.params;
 
-  const limit = Number(req.query.limit) || 5;
-  const skip = Number(req.query.skip) || 0;
-  const minRating = req.query.minRating ? Number(req.query.minRating) : undefined;
-  const sortByLikes = req.query.sortByLikes === 'true';
+        const limit = Number(req.query.limit) || 5;
+        const skip = Number(req.query.skip) || 0;
+        const minRating = req.query.minRating !== undefined ? Number(req.query.minRating) : undefined;
+        const sortByLikes = req.query.sortByLikes === 'true';
 
-  const result = await ReviewService.getReviewsByCustomer(
-    customerId,
-    limit,
-    skip,
-    minRating,
-    sortByLikes
-  );
+        const result = await ReviewService.getReviewsByCustomer(
+            customerId,
+            limit,
+            skip,
+            minRating,
+            sortByLikes
+        );
 
-  res.json(result);
+        return res.status(200).json(result);
+
+    } catch (error) {
+        return next(error);
+    }
 };
+
 // Dar like a una review
 const likeReview = async (req: Request, res: Response, next: NextFunction) => {
     try {
