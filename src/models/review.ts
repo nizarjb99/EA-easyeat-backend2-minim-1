@@ -21,57 +21,17 @@ export interface IReview {
 
 // 2️⃣ Schema
 const reviewSchema = new Schema<IReview>({
-    customer_id: {
-        type: Schema.Types.ObjectId,
-        ref: 'Customer',
-        required: true
+    customer_id: { type: Schema.Types.ObjectId, ref: 'Customer', required: true},
+    restaurant_id: { type: Schema.Types.ObjectId, ref: 'Restaurant', required: true },
+    date: { type: Date, required: true, default: Date.now },
+    rating: { type: Number, required: true, min: 1, max: 10 },
+    ratings: { foodQuality: { type: Number, min: 0, max: 10 },
+        staffService: { type: Number, min: 0, max: 10 },
+        cleanliness: { type: Number, min: 0, max: 10 },
+        environment: { type: Number, min: 0, max: 10}
     },
-    restaurant_id: {
-        type: Schema.Types.ObjectId,
-        ref: 'Restaurant',
-        required: true
-    },
-    date: {
-        type: Date,
-        required: true,
-        default: Date.now
-    },
-    rating: {
-        type: Number,
-        required: true,
-        min: 1,
-        max: 10
-    },
-    ratings: {
-        foodQuality: {
-            type: Number,
-            min: 0,
-            max: 10
-        },
-        staffService: {
-            type: Number,
-            min: 0,
-            max: 10
-        },
-        cleanliness: {
-            type: Number,
-            min: 0,
-            max: 10
-        },
-        environment: {
-            type: Number,
-            min: 0,
-            max: 10
-        }
-    },
-    comment: {
-        type: String,
-        trim: true
-    },
-    likes: {
-        type: Number,
-        default: 0
-    }
+    comment: { type: String, trim: true },
+    likes: { type: Number, default: 0 }
 }, {
     timestamps: true
 });

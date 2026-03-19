@@ -1,110 +1,333 @@
-import { Schema, model, Types } from "mongoose";
+import { Schema, model, Types, Model, Query } from 'mongoose';
 
-// 1️⃣ Interface Actualizada
-export interface IRestaurant {
-    _id?: Types.ObjectId;
-    profile: {
-        name: string;
-        description: string;
-        rating?: number;
-        category: string[];
-        timetable?: {
-            monday?: [{ open: string, close: string }];
-            tuesday?: [{ open: string, close: string }];
-            wednesday?: [{ open: string, close: string }];
-            thursday?: [{ open: string, close: string }];
-            friday?: [{ open: string, close: string }];
-            saturday?: [{ open: string, close: string }];
-            sunday?: [{ open: string, close: string }];
-        };
-        image?: string[];
-        contact?: {
-            phone?: string;
-            email?: string;
-        };
-        location: {
-            city: string;
-            address?: string;
-            googlePlaceId?: string;
-            coordinates?: {
-                type: string;
-                coordinates: [number, number];
-            };
-        };
-    };
-    employees?: Types.ObjectId[];
-    dishes?: Types.ObjectId[];
-    rewards?: Types.ObjectId[];
-    statistics?: Types.ObjectId;
-    badges?: Types.ObjectId[];
-    visits?: Types.ObjectId[]; 
+// ─────────────────────────────────────────────────────────────────────────────
+// Constants
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const RESTAURANT_CATEGORIES = [
+    'Italià', 'Japonès', 'Sushi', 'Mexicà', 'Xinès', 'Indi', 'Tailandès', 'Francès',
+    'Espanyol', 'Grec', 'Turc', 'Coreà', 'Vietnamita', 'Alemany', 'Brasileny', 'Peruà',
+    'Vegà', 'Vegetarià', 'Marisc', 'Carn', 'Pizzeria', 'Cafeteria', 'Ramen', 'Gluten Free',
+    'Gourmet', 'Fast Food', 'Buffet', 'Food Truck', 'Lounge', 'Pub', 'Wine Bar', 'Rooftop',
+    'Bar', 'Taperia', 'Gelateria', 'Estrella Michelin', 'Street Food',
+] as const;
+
+export type RestaurantCategory = (typeof RESTAURANT_CATEGORIES)[number];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Sub-interfaces
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface ITimetableSlot {
+    open:  string; // "HH:MM"
+    close: string; // "HH:MM"
 }
 
-// 2️⃣ Schema Actualizado
-const restaurantSchema = new Schema<IRestaurant>(
+export interface ITimetable {
+    monday?:    ITimetableSlot[];
+    tuesday?:   ITimetableSlot[];
+    wednesday?: ITimetableSlot[];
+    thursday?:  ITimetableSlot[];
+    friday?:    ITimetableSlot[];
+    saturday?:  ITimetableSlot[];
+    sunday?:    ITimetableSlot[];
+}
+
+export interface IGeoPoint {
+    type:        'Point';
+    coordinates: [number, number]; // [longitude, latitude]
+}
+
+export interface IRestaurantLocation {
+    city:           string;           // required
+    address?:       string;           // optional
+    googlePlaceId?: string;           // optional
+    coordinates:    IGeoPoint;        // required – GeoJSON Point
+}
+
+export interface IRestaurantContact {
+    phone?: string;
+    email?: string;
+}
+
+export interface IRestaurantProfile {
+    name:        string;              // required, unique per city (compound index)
+    description: string;             // required
+    rating:      number;             // 0–10, default 0, updated from reviews
+    category:    RestaurantCategory[]; // required, enum-validated
+    timetable?:  ITimetable;
+    image?:      string[];
+    contact?:    IRestaurantContact;
+    location:    IRestaurantLocation; // required
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Root interface
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface IRestaurant {
+    _id?:       Types.ObjectId;
+    profile:    IRestaurantProfile;
+    employees?: Types.ObjectId[];
+    dishes?:    Types.ObjectId[];
+    rewards?:   Types.ObjectId[];
+    statistics?: Types.ObjectId;
+    badges?:    Types.ObjectId[];
+    visits?:    Types.ObjectId[];
+    /** null  → restaurant is active; Date → soft-deleted at that timestamp */
+    deletedAt?: Date | null;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Query-helper interface  (enables Model.find().active())
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface RestaurantQueryHelpers {
+    /** Filters out soft-deleted documents (deletedAt !== null). */
+    active(this: RestaurantQuery): RestaurantQuery;
+}
+
+type RestaurantQuery = Query<any, IRestaurant> & RestaurantQueryHelpers;
+
+export interface RestaurantModelType extends Model<IRestaurant, RestaurantQueryHelpers> {}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Regex validators (reused in schema)
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** E.164-compatible international phone number */
+const PHONE_REGEX = /^\+?[1-9]\d{1,14}$/;
+
+/** Simple RFC-5322-like e-mail check */
+const EMAIL_REGEX = /^\S+@\S+\.\S+$/;
+
+/** "HH:MM" – 00:00 … 23:59 */
+const TIME_REGEX  = /^([01]\d|2[0-3]):[0-5]\d$/;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Sub-schemas
+// ─────────────────────────────────────────────────────────────────────────────
+
+const timetableSlotSchema = new Schema<ITimetableSlot>(
     {
-        profile: {
-            name: { type: String, required: true },
-            description: { type: String, required: true },
-            rating: { type: Number, default: 0 },
-            category: {
-                type: [{
-                    type: String,
-                    required: true,
-                    enum: [
-                        'Italià', 'Japonès', 'Sushi', 'Mexicà', 'Xinès', 'Indi', 'Tailandès', 'Francès',
-                        'Espanyol', 'Grec', 'Turc', 'Coreà', 'Vietnamita', 'Alemany', 'Brasileny', 'Peruà',
-                        'Vegà', 'Vegetarià', 'Marisc', 'Carn', 'Pizzeria', 'Cafeteria', 'Ramen', 'Gluten Free',
-                        'Gourmet', 'Fast Food', 'Buffet', 'Food Truck', 'Lounge', 'Pub', 'Wine Bar', 'Rooftop',
-                        'Bar', 'Taperia', 'Gelateria', 'Estrella Michelin', 'Street Food'
-                    ]
-                }],
-                required: true
-            },
-            timetable: {
-                monday: [{ open: { type: String }, close: { type: String } }],
-                tuesday: [{ open: { type: String }, close: { type: String } }],
-                wednesday: [{ open: { type: String }, close: { type: String } }],
-                thursday: [{ open: { type: String }, close: { type: String } }],
-                friday: [{ open: { type: String }, close: { type: String } }],
-                saturday: [{ open: { type: String }, close: { type: String } }],
-                sunday: [{ open: { type: String }, close: { type: String } }]
-            },
-            image: [{ type: String }],
-            contact: {
-                phone: { type: String },
-                email: { type: String }
-            },
-            location: {
-                city: { type: String, required: true },
-                address: { type: String, required: false, default: '' },
-                googlePlaceId: { type: String, required: false },
-                coordinates: {
-                    type: { type: String, enum: ['Point'] },
-                    coordinates: { type: [Number], required: false }
-                }
+        open:  {
+            type:     String,
+            required: true,
+            validate: {
+                validator: (v: string) => TIME_REGEX.test(v),
+                message:   (p: { value: string }) => `"${p.value}" is not a valid HH:MM time.`,
             },
         },
-        employees:  [{ type: Schema.Types.ObjectId, ref: "Employee" }],
-        dishes:     [{ type: Schema.Types.ObjectId, ref: "Dish" }],
-        rewards:    [{ type: Schema.Types.ObjectId, ref: "Reward" }],
-        statistics: { type: Schema.Types.ObjectId, ref: "Statistics" },
-        badges:     [{ type: Schema.Types.ObjectId, ref: "Badge" }],
-        visits:    [{ type: Schema.Types.ObjectId, ref: "Visit" }] 
+        close: {
+            type:     String,
+            required: true,
+            validate: {
+                validator: (v: string) => TIME_REGEX.test(v),
+                message:   (p: { value: string }) => `"${p.value}" is not a valid HH:MM time.`,
+            },
+        },
     },
-    { timestamps: true }
+    { _id: false }
 );
 
-// Índices (Se mantienen igual)
+const timetableSchema = new Schema<ITimetable>(
+    {
+        monday:    [timetableSlotSchema],
+        tuesday:   [timetableSlotSchema],
+        wednesday: [timetableSlotSchema],
+        thursday:  [timetableSlotSchema],
+        friday:    [timetableSlotSchema],
+        saturday:  [timetableSlotSchema],
+        sunday:    [timetableSlotSchema],
+    },
+    { _id: false }
+);
+
+const geoPointSchema = new Schema<IGeoPoint>(
+    {
+        type: {
+            type:     String,
+            enum:     ['Point'],
+            required: true,
+            default:  'Point',
+        },
+        coordinates: {
+            type:     [Number],
+            required: true,
+            validate: {
+                validator: (v: number[]) =>
+                    v.length === 2
+                    && v[0] >= -180 && v[0] <= 180   // longitude
+                    && v[1] >= -90  && v[1] <= 90,   // latitude
+                message: 'coordinates must be [longitude (-180..180), latitude (-90..90)].',
+            },
+        },
+    },
+    { _id: false }
+);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Root schema
+// ─────────────────────────────────────────────────────────────────────────────
+
+const restaurantSchema = new Schema<IRestaurant, RestaurantModelType, {}, RestaurantQueryHelpers>(
+    {
+        profile: {
+            name: {
+                type:     String,
+                required: [true, 'Restaurant name is required.'],
+                trim:     true,
+                minlength: [2,   'Name must be at least 2 characters.'],
+                maxlength: [120, 'Name must be at most 120 characters.'],
+            },
+            description: {
+                type:     String,
+                required: [true, 'Description is required.'],
+                trim:     true,
+                minlength: [10,   'Description must be at least 10 characters.'],
+                maxlength: [2000, 'Description must be at most 2000 characters.'],
+            },
+            rating: {
+                type:    Number,
+                default: 0,
+                min:     [0,  'Rating cannot be below 0.'],
+                max:     [10, 'Rating cannot exceed 10.'],
+            },
+            category: {
+                type:     [{ type: String, enum: RESTAURANT_CATEGORIES }],
+                required: [true, 'At least one category is required.'],
+                validate: {
+                    validator: (v: string[]) => v.length >= 1,
+                    message:   'category must contain at least one value.',
+                },
+            },
+            timetable: { type: timetableSchema, required: false },
+            image:     [{ type: String }],
+            contact: {
+                phone: {
+                    type:     String,
+                    trim:     true,
+                    validate: {
+                        validator: (v: string) => PHONE_REGEX.test(v),
+                        message:   (p: { value: string }) => `"${p.value}" is not a valid phone number.`,
+                    },
+                },
+                email: {
+                    type:     String,
+                    trim:     true,
+                    lowercase: true,
+                    validate: {
+                        validator: (v: string) => EMAIL_REGEX.test(v),
+                        message:   (p: { value: string }) => `"${p.value}" is not a valid e-mail address.`,
+                    },
+                },
+            },
+            location: {
+                city: {
+                    type:      String,
+                    required:  [true, 'City is required.'],
+                    trim:      true,
+                },
+                address: {
+                    type:     String,
+                    trim:     true,
+                    required: false,
+                },
+                googlePlaceId: {
+                    type:     String,
+                    required: false,
+                },
+                coordinates: {
+                    type:     geoPointSchema,
+                    required: [true, 'GeoJSON coordinates are required.'],
+                },
+            },
+        },
+
+        employees:  [{ type: Schema.Types.ObjectId, ref: 'Employee' }],
+        dishes:     [{ type: Schema.Types.ObjectId, ref: 'Dish'     }],
+        rewards:    [{ type: Schema.Types.ObjectId, ref: 'Reward'   }],
+        statistics: { type: Schema.Types.ObjectId,  ref: 'Statistics' },
+        badges:     [{ type: Schema.Types.ObjectId, ref: 'Badge'    }],
+        visits:     [{ type: Schema.Types.ObjectId, ref: 'Visit'    }],
+
+        deletedAt:  { type: Date, default: null },
+    },
+    {
+        timestamps: true,     // adds createdAt / updatedAt
+        versionKey: false,    // removes __v
+    }
+);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Indexes
+// ─────────────────────────────────────────────────────────────────────────────
+
+// 1. GeoJSON 2dsphere – required for $geoNear / $near queries
 restaurantSchema.index(
-    { 'profile.location.coordinates': '2dsphere' },
-    { sparse: true }
+    { 'profile.location.coordinates': '2dsphere' }
 );
 
-restaurantSchema.index({
-    'profile.rating':       -1,
-    'profile.category':      1,
-    'profile.location.city': 1,
+// 2. Unique name per city (case-insensitive enforced at app layer via trim/lowercase)
+restaurantSchema.index(
+    { 'profile.name': 1, 'profile.location.city': 1 },
+    { unique: true, name: 'unique_name_per_city' }
+);
+
+// 3. Performance – common query fields
+restaurantSchema.index({ 'profile.rating':   -1 });   // sort by rating
+restaurantSchema.index({ 'profile.category':  1 });   // filter by category
+restaurantSchema.index({ 'profile.location.city': 1 }); // filter by city
+restaurantSchema.index({ deletedAt:            1 });   // active-restaurant filter
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Query helper – .active()
+// ─────────────────────────────────────────────────────────────────────────────
+
+restaurantSchema.query.active = function (this: RestaurantQuery): RestaurantQuery {
+    return this.where({ deletedAt: null });
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Pre-save hooks
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Recalculate `profile.rating` from the aggregated reviews whenever the
+ * document is saved.  The actual aggregation is triggered from the Review
+ * service (see services/review.ts) – here we only clamp the stored value
+ * so it can never slip outside 0–10 due to a bad direct update.
+ */
+restaurantSchema.pre('save', function (next) {
+    if (this.isModified('profile.rating')) {
+        this.profile.rating = Math.min(10, Math.max(0, this.profile.rating));
+    }
+    next();
 });
 
-export const RestaurantModel = model<IRestaurant>("Restaurant", restaurantSchema);
+// ─────────────────────────────────────────────────────────────────────────────
+// Static helpers
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Soft-delete a restaurant (sets deletedAt to now).
+ * Use this instead of findByIdAndDelete in production.
+ */
+restaurantSchema.statics.softDelete = async function (
+    restaurantId: string
+): Promise<IRestaurant | null> {
+    return this.findByIdAndUpdate(
+        restaurantId,
+        { deletedAt: new Date() },
+        { new: true }
+    );
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Model export
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const RestaurantModel = model<IRestaurant, RestaurantModelType>(
+    'Restaurant',
+    restaurantSchema
+);

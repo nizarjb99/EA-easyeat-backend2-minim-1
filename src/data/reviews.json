@@ -1,8 +1,8 @@
 [
   {
-    "customer_id": { "$oid": "69bb1c624864d09fa0540c6d" },
-    "restaurant_id": { "$oid": "69bb1c624864d09fa0540c7e" },
-    "date": { "$date": "2024-06-14T21:30:00.000Z" },
+    "customer_id": "69bb1c624864d09fa0540c6d",
+    "restaurant_id": "69bb1c624864d09fa0540c7e",
+    "date": "2024-06-14T21:30:00.000Z",
     "rating": 9,
     "ratings": {
       "foodQuality": 9,
@@ -14,9 +14,9 @@
     "likes": 14
   },
   {
-    "customer_id": { "$oid": "69bb1c624864d09fa0540c6d" },
-    "restaurant_id": { "$oid": "69bb1c624864d09fa0540c8c" },
-    "date": { "$date": "2024-05-20T20:00:00.000Z" },
+    "customer_id": "69bb1c624864d09fa0540c6d",
+    "restaurant_id": "69bb1c624864d09fa0540c8c",
+    "date": "2024-05-20T20:00:00.000Z",
     "rating": 7,
     "ratings": {
       "foodQuality": 7,
@@ -27,9 +27,9 @@
     "likes": 3
   },
   {
-    "customer_id": { "$oid": "69bb1c624864d09fa0540c6e" },
-    "restaurant_id": { "$oid": "69bb1c624864d09fa0540c8c" },
-    "date": { "$date": "2024-04-10T13:00:00.000Z" },
+    "customer_id": "69bb1c624864d09fa0540c6e",
+    "restaurant_id": "69bb1c624864d09fa0540c8c",
+    "date": "2024-04-10T13:00:00.000Z",
     "rating": 9,
     "ratings": {
       "foodQuality": 10,
