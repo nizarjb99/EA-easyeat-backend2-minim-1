@@ -16,6 +16,12 @@ const createRestaurant = async (req: Request, res: Response, next: NextFunction)
                 error,
             });
         }
+        if (error?.name === 'ValidationError') {
+            return res.status(422).json({
+                message: 'Validation failed',
+                error: error.errors || error.message,
+            });
+        }
         return res.status(500).json({ error });
     }
 };
@@ -54,6 +60,12 @@ const updateRestaurant = async (req: Request, res: Response, next: NextFunction)
             return res.status(409).json({
                 message: 'A restaurant with this name already exists in this city.',
                 error,
+            });
+        }
+        if (error?.name === 'ValidationError') {
+            return res.status(422).json({
+                message: 'Validation failed',
+                error: error.errors || error.message,
             });
         }
         return res.status(500).json({ error });

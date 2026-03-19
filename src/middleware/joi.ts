@@ -256,8 +256,8 @@ export const Schemas = {
     restaurant: {
         create: Joi.object<IRestaurant>({
             profile: Joi.object({
-                name:        Joi.string().required(),
-                description: Joi.string().required(),
+                name:        Joi.string().min(2).max(120).required(),
+                description: Joi.string().min(10).max(2000).required(),
                 category:    Joi.array().items(Joi.string().valid(...categoryEnum)).min(1).required(),
                 rating:      Joi.number().min(0).max(10),
                 timetable:   timetableSchema,
