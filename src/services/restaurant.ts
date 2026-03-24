@@ -11,26 +11,14 @@ const createRestaurant = async (data: Partial<IRestaurant>): Promise<IRestaurant
 };
 
 const getRestaurant = async (restaurantId: string): Promise<IRestaurant | null> => {
-    return RestaurantModel
-        .findById(restaurantId)
-        .active()
-        .populate('rewards')
-        .lean();
+    return RestaurantModel.findById(restaurantId).active().populate('rewards').lean();
 };
 
 const getAllRestaurants = async (): Promise<IRestaurant[]> => {
-    return RestaurantModel
-        .find()
-        .active()
-        .sort({ 'profile.rating': -1 })
-        .populate('rewards')
-        .lean();
+    return RestaurantModel.find().active().sort({ 'profile.rating': -1 }).populate('rewards').lean();
 };
 
-const updateRestaurant = async (
-    restaurantId: string,
-    data: Partial<IRestaurant>
-): Promise<IRestaurant | null> => {
+const updateRestaurant = async ( restaurantId: string, data: Partial<IRestaurant> ): Promise<IRestaurant | null> => {
     const restaurant = await RestaurantModel.findById(restaurantId).active();
     if (!restaurant) return null;
     restaurant.set(data);
@@ -79,57 +67,35 @@ const hardDeleteRestaurant = async (restaurantId: string): Promise<IRestaurant |
 
 const getRestaurantWithCustomers = async (restaurantId: string): Promise<IRestaurant | null> => {
     return RestaurantModel
-        .findById(restaurantId)
-        .active()
-        .populate({ path: 'visits', populate: { path: 'customer_id' } })
+        .findById(restaurantId).active().populate({ path: 'visits', populate: { path: 'customer_id' } })
         .lean();
 };
 
 const getRestaurantFull = async (restaurantId: string): Promise<IRestaurant | null> => {
     return RestaurantModel
-        .findById(restaurantId)
-        .active()
-        .populate('employees')
-        .populate('rewards')
-        .populate('badges')
-        .populate('statistics')
-        .populate('visits')
-        .lean();
+        .findById(restaurantId).active().populate('employees').populate('rewards')
+        .populate('badges').populate('statistics')
+        .populate('visits').lean();
 };
 
-const getNearby = async (
-    lng: number,
-    lat: number,
-    maxDistance: number
-): Promise<IRestaurant[]> => {
+const getNearby = async ( lng: number, lat: number,
+ maxDistance: number ): Promise<IRestaurant[]> => {
     return RestaurantModel
-        .find({
-            deletedAt: null,
-            'profile.location.coordinates': {
+        .find({ deletedAt: null,'profile.location.coordinates': {
                 $near: {
                     $geometry: { type: 'Point', coordinates: [lng, lat] },
                     $maxDistance: maxDistance,
-                },
-            },
-        })
-        .lean();
+                } } }).lean();
 };
 
 const getBadges = async (restaurantId: string): Promise<IRestaurant | null> => {
-    return RestaurantModel
-        .findById(restaurantId)
-        .active()
-        .select('badges')
-        .populate('badges')
-        .lean();
+    return RestaurantModel.findById(restaurantId)
+        .active().select('badges').populate('badges').lean();
 };
 
 const getStatistics = async (restaurantId: string): Promise<IRestaurant | null> => {
     return RestaurantModel
-        .findById(restaurantId)
-        .active()
-        .select('statistics')
-        .populate('statistics')
+        .findById(restaurantId).active().select('statistics').populate('statistics')
         .lean();
 };
 
@@ -137,18 +103,11 @@ const getStatistics = async (restaurantId: string): Promise<IRestaurant | null> 
 // Rating recalculation
 // ─────────────────────────────────────────────────────────────────────────────
 
-const updateRating = async (
-    restaurantId: string,
-    newAverage: number
+const updateRating = async ( restaurantId: string, newAverage: number
 ): Promise<IRestaurant | null> => {
     const clamped = Math.min(10, Math.max(0, newAverage));
-    return RestaurantModel
-        .findByIdAndUpdate(
-            restaurantId,
-            { 'profile.rating': clamped },
-            { new: true, runValidators: true }
-        )
-        .lean();
+    return RestaurantModel.findByIdAndUpdate( restaurantId, { 'profile.rating': clamped },
+            { new: true, runValidators: true } ).lean();
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -243,7 +202,8 @@ const getFilteredRestaurants = async (
                 query:         baseFilter,
             },
         } as PipelineStage);
-    } else {
+    }
+    else {
         if (city)               baseFilter['profile.location.city'] = { $regex: city, $options: 'i' };
         if (minRating)          baseFilter['profile.rating']        = { $gte: minRating };
         if (categories?.length) baseFilter['profile.category']      = { $in: categories };

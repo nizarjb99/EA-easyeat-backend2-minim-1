@@ -5,12 +5,9 @@ import { ReviewModel, IReview } from '../models/review';
 // CREATE
 // ========================
 const createReview = async (data: Partial<IReview>): Promise<IReview> => {
-    const review = new ReviewModel({
-        ...data,
-        customer_id: new mongoose.Types.ObjectId(data.customer_id),
+    const review = new ReviewModel({...data, customer_id: new mongoose.Types.ObjectId(data.customer_id),
         restaurant_id: new mongoose.Types.ObjectId(data.restaurant_id)
     });
-
     return await review.save();
 };
 
@@ -19,19 +16,15 @@ const createReview = async (data: Partial<IReview>): Promise<IReview> => {
 // ========================
 const getReview = async (reviewId: string): Promise<IReview | null> => {
     if (!mongoose.Types.ObjectId.isValid(reviewId)) return null;
-
-    return await ReviewModel.findOne({ _id: reviewId, deleted: false })
-        .populate('customer_id', 'name profilePictures')
-        .populate('restaurant_id', 'name')
-        .lean();
+    return await ReviewModel.findOne({ _id: reviewId, deleted: false }).populate('customer_id', 'name profilePictures')
+        .populate('restaurant_id', 'name').lean();
 };
 
 // ========================
 // GET ALL
 // ========================
 const getAllReviews = async (): Promise<IReview[]> => {
-    return await ReviewModel.find({ deleted: false })
-        .populate('customer_id', 'name')
+    return await ReviewModel.find({ deleted: false }).populate('customer_id', 'name')
         .populate('restaurant_id', 'name')
         .lean();
 };
@@ -39,22 +32,14 @@ const getAllReviews = async (): Promise<IReview[]> => {
 // ========================
 // UPDATE
 // ========================
-const updateReview = async (
-    reviewId: string,
-    data: Partial<IReview>
-): Promise<IReview | null> => {
-
+const updateReview = async ( reviewId: string, data: Partial<IReview> ):
+    Promise<IReview | null> => {
     if (!mongoose.Types.ObjectId.isValid(reviewId)) return null;
-
     delete data._id;
     delete data.customer_id;
     delete data.restaurant_id;
-
-    return await ReviewModel.findOneAndUpdate(
-        { _id: reviewId, deleted: false },
-        data,
-        { new: true, runValidators: true }
-    ).lean();
+    return await ReviewModel.findOneAndUpdate( { _id: reviewId, deleted: false },
+        data, { new: true, runValidators: true } ).lean();
 };
 
 // ========================
@@ -62,12 +47,8 @@ const updateReview = async (
 // ========================
 const deleteReview = async (reviewId: string): Promise<IReview | null> => {
     if (!mongoose.Types.ObjectId.isValid(reviewId)) return null;
-
-    return await ReviewModel.findOneAndUpdate(
-        { _id: reviewId, deleted: false },
-        { deleted: true },
-        { new: true }
-    ).lean();
+    return await ReviewModel.findOneAndUpdate( { _id: reviewId, deleted: false },
+        { deleted: true }, { new: true } ).lean();
 };
 
 // ========================
@@ -109,16 +90,11 @@ const getReviewsByCustomer = async (
     const sort: any = sortByLikes ? { likes: -1 } : { date: -1 };
 
     const [reviews, total] = await Promise.all([
-        ReviewModel.find(filter)
-            .sort(sort)
-            .skip(skip)
-            .limit(limit)
+        ReviewModel.find(filter).sort(sort).skip(skip).limit(limit)
             .populate({
                 path: 'restaurant_id',
                 select: 'profile'
-            })
-            .lean(),
-
+            }).lean(),
         ReviewModel.countDocuments(filter)
     ]);
 

@@ -10,9 +10,8 @@ export interface PaginationOptions {
 }
 
 export interface PaginatedResult<T> {
-    data:       T[];
-    total:      number;
-    page:       number;
+    data: T[]; total: number;
+    page: number;
     totalPages: number;
 }
 
@@ -29,35 +28,17 @@ const createCustomer = async (data: Partial<ICustomer>) => {
 // ─── Read (single) ────────────────────────────────────────────────────────────
 
 const getCustomer = async (customerId: string, includeDeleted = false) => {
-    const query = CustomerModel.findById(customerId)
-        .populate({
-            path: 'visitHistory',
-            populate: {
-                path: 'restaurant_id'
-            }
-        });
+    const query = CustomerModel.findById(customerId).populate({ path: 'visitHistory', populate: { path: 'restaurant_id' } });
     return includeDeleted ? query : query.active();
 };
 
 // ─── Read (paginated list — active only) ──────────────────────────────────────
 
-const getAllCustomers = async (
-    { page = 1, limit = 20 }: PaginationOptions = {}
-): Promise<PaginatedResult<ICustomer>> => {
+const getAllCustomers = async ( { page = 1, limit = 20 }: PaginationOptions = {} ): Promise<PaginatedResult<ICustomer>> => {
     const skip   = (page - 1) * limit;
     const filter = { deletedAt: null };
-
-    const [data, total] = await Promise.all([
-        CustomerModel.find(filter).skip(skip).limit(limit).lean(),
-        CustomerModel.countDocuments(filter),
-    ]);
-
-    return {
-        data,
-        total,
-        page,
-        totalPages: Math.ceil(total / limit),
-    };
+    const [data, total] = await Promise.all([ CustomerModel.find(filter).skip(skip).limit(limit).lean(), CustomerModel.countDocuments(filter) ]);
+    return { data, total, page, totalPages: Math.ceil(total / limit) };
 };
 
 // ─── Update ───────────────────────────────────────────────────────────────────
