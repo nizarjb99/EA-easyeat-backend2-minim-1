@@ -110,21 +110,12 @@ const TIME_REGEX  = /^([01]\d|2[0-3]):[0-5]\d$/;
 
 const timetableSlotSchema = new Schema<ITimetableSlot>(
     {
-        open:  {
-            type:     String,
-            required: true,
-            validate: {
-                validator: (v: string) => TIME_REGEX.test(v),
-                message:   (p: { value: string }) => `"${p.value}" is not a valid HH:MM time.`,
-            },
+        open:  { type: String, required: true, validate: { validator: (v: string) => TIME_REGEX.test(v),
+                message:   (p: { value: string }) => `"${p.value}" is not a valid HH:MM time.`}
         },
-        close: {
-            type:     String,
-            required: true,
-            validate: {
-                validator: (v: string) => TIME_REGEX.test(v),
-                message:   (p: { value: string }) => `"${p.value}" is not a valid HH:MM time.`,
-            },
+
+        close: { type: String, required: true, validate: { validator: (v: string) => TIME_REGEX.test(v),
+                message:   (p: { value: string }) => `"${p.value}" is not a valid HH:MM time.`},
         },
     },
     { _id: false }
@@ -145,15 +136,8 @@ const timetableSchema = new Schema<ITimetable>(
 
 const geoPointSchema = new Schema<IGeoPoint>(
     {
-        type: {
-            type:     String,
-            enum:     ['Point'],
-            required: true,
-            default:  'Point',
-        },
-        coordinates: {
-            type:     [Number],
-            required: true,
+        type: { type: String, enum: ['Point'], required: true, default: 'Point' },
+        coordinates: { type: [Number], required: true,
             validate: {
                 validator: (v: number[]) =>
                     v.length === 2
@@ -173,49 +157,32 @@ const geoPointSchema = new Schema<IGeoPoint>(
 const restaurantSchema = new Schema<IRestaurant, RestaurantModelType, {}, RestaurantQueryHelpers>(
     {
         profile: {
-            name: {
-                type:     String,
-                required: [true, 'Restaurant name is required.'],
-                trim:     true,
-                minlength: [2,   'Name must be at least 2 characters.'],
-                maxlength: [120, 'Name must be at most 120 characters.'],
+            name: { type: String, required: [true, 'Restaurant name is required.'],
+                trim: true, minlength: [2, 'Name must be at least 2 characters.'],
+                maxlength: [120, 'Name must be at most 120 characters.']
             },
-            description: {
-                type:     String,
-                required: [true, 'Description is required.'],
-                trim:     true,
-                minlength: [10,   'Description must be at least 10 characters.'],
+            description: { type: String, required: [true, 'Description is required.'],
+                trim: true, minlength: [10,   'Description must be at least 10 characters.'],
                 maxlength: [2000, 'Description must be at most 2000 characters.'],
             },
-            rating: {
-                type:    Number,
-                default: 0,
-                min:     [0,  'Rating cannot be below 0.'],
-                max:     [10, 'Rating cannot exceed 10.'],
+            rating: { type: Number, default: 0, min: [0,  'Rating cannot be below 0.'],
+                max: [10, 'Rating cannot exceed 10.'],
             },
-            category: {
-                type:     [{ type: String, enum: RESTAURANT_CATEGORIES }],
+            category: { type: [{ type: String, enum: RESTAURANT_CATEGORIES }],
                 required: [true, 'At least one category is required.'],
-                validate: {
-                    validator: (v: string[]) => v.length >= 1,
+                validate: { validator: (v: string[]) => v.length >= 1,
                     message:   'category must contain at least one value.',
-                },
+                }
             },
             timetable: { type: timetableSchema, required: false },
-            image:     [{ type: String }],
-            contact: {
-                phone: {
-                    type:     String,
-                    trim:     true,
+            image: [{ type: String }],
+            contact: { phone: { type: String, trim: true,
                     validate: {
                         validator: (v: string) => PHONE_REGEX.test(v),
                         message:   (p: { value: string }) => `"${p.value}" is not a valid phone number.`,
                     },
                 },
-                email: {
-                    type:     String,
-                    trim:     true,
-                    lowercase: true,
+                email: { type: String, trim: true, lowercase: true,
                     validate: {
                         validator: (v: string) => EMAIL_REGEX.test(v),
                         message:   (p: { value: string }) => `"${p.value}" is not a valid e-mail address.`,
@@ -223,34 +190,18 @@ const restaurantSchema = new Schema<IRestaurant, RestaurantModelType, {}, Restau
                 },
             },
             location: {
-                city: {
-                    type:      String,
-                    required:  [true, 'City is required.'],
-                    trim:      true,
-                },
-                address: {
-                    type:     String,
-                    trim:     true,
-                    required: false,
-                },
-                googlePlaceId: {
-                    type:     String,
-                    required: false,
-                },
-                coordinates: {
-                    type:     geoPointSchema,
-                    required: [true, 'GeoJSON coordinates are required.'],
-                },
+                city: { type: String, required:  [true, 'City is required.'], trim: true },
+                address: { type: String, trim: true, required: false },
+                googlePlaceId: { type: String, required: false },
+                coordinates: { type: geoPointSchema, required: [true, 'GeoJSON coordinates are required.'] },
             },
         },
-
         employees:  [{ type: Schema.Types.ObjectId, ref: 'Employee' }],
         dishes:     [{ type: Schema.Types.ObjectId, ref: 'Dish'     }],
         rewards:    [{ type: Schema.Types.ObjectId, ref: 'Reward'   }],
         statistics: { type: Schema.Types.ObjectId,  ref: 'Statistics' },
         badges:     [{ type: Schema.Types.ObjectId, ref: 'Badge'    }],
         visits:     [{ type: Schema.Types.ObjectId, ref: 'Visit'    }],
-
         deletedAt:  { type: Date, default: null },
     },
     {
@@ -264,21 +215,16 @@ const restaurantSchema = new Schema<IRestaurant, RestaurantModelType, {}, Restau
 // ─────────────────────────────────────────────────────────────────────────────
 
 // 1. GeoJSON 2dsphere – required for $geoNear / $near queries
-restaurantSchema.index(
-    { 'profile.location.coordinates': '2dsphere' }
-);
+restaurantSchema.index({ 'profile.location.coordinates': '2dsphere' });
 
 // 2. Unique name per city (case-insensitive enforced at app layer via trim/lowercase)
-restaurantSchema.index(
-    { 'profile.name': 1, 'profile.location.city': 1 },
-    { unique: true, name: 'unique_name_per_city' }
-);
+restaurantSchema.index({ 'profile.name': 1, 'profile.location.city': 1 }, { unique: true, name: 'unique_name_per_city' });
 
 // 3. Performance – common query fields
-restaurantSchema.index({ 'profile.rating':   -1 });   // sort by rating
-restaurantSchema.index({ 'profile.category':  1 });   // filter by category
+restaurantSchema.index({ 'profile.rating': -1 });   // sort by rating
+restaurantSchema.index({ 'profile.category': 1 });   // filter by category
 restaurantSchema.index({ 'profile.location.city': 1 }); // filter by city
-restaurantSchema.index({ deletedAt:            1 });   // active-restaurant filter
+restaurantSchema.index({ deletedAt: 1 });   // active-restaurant filter
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Query helper – .active()
@@ -300,8 +246,7 @@ restaurantSchema.query.active = function (this: RestaurantQuery): RestaurantQuer
  */
 restaurantSchema.pre('save', function (next) {
     if (this.isModified('profile.rating')) {
-        this.profile.rating = Math.min(10, Math.max(0, this.profile.rating));
-    }
+        this.profile.rating = Math.min(10, Math.max(0, this.profile.rating)); }
     next();
 });
 
@@ -313,21 +258,12 @@ restaurantSchema.pre('save', function (next) {
  * Soft-delete a restaurant (sets deletedAt to now).
  * Use this instead of findByIdAndDelete in production.
  */
-restaurantSchema.statics.softDelete = async function (
-    restaurantId: string
-): Promise<IRestaurant | null> {
-    return this.findByIdAndUpdate(
-        restaurantId,
-        { deletedAt: new Date() },
-        { new: true }
-    );
+restaurantSchema.statics.softDelete = async function ( restaurantId: string ): Promise<IRestaurant | null> {
+    return this.findByIdAndUpdate( restaurantId, { deletedAt: new Date() }, { new: true } );
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Model export
 // ─────────────────────────────────────────────────────────────────────────────
 
-export const RestaurantModel = model<IRestaurant, RestaurantModelType>(
-    'Restaurant',
-    restaurantSchema
-);
+export const RestaurantModel = model<IRestaurant, RestaurantModelType>('Restaurant', restaurantSchema );

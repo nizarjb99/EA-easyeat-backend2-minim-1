@@ -26,35 +26,16 @@ export type VisitModelType = Model<IVisit, VisitQueryHelpers>;
 
 const visitSchema = new Schema<IVisit, VisitModelType, {}, VisitQueryHelpers>(
     {
-        customer_id: {
-            type:     Schema.Types.ObjectId,
-            ref:      'Customer',
+        customer_id: { type: Schema.Types.ObjectId, ref: 'Customer',
             required: [true, 'customer_id is required'],
         },
-        restaurant_id: {
-            type:     Schema.Types.ObjectId,
-            ref:      'Restaurant',
+        restaurant_id: { type: Schema.Types.ObjectId, ref: 'Restaurant',
             required: [true, 'restaurant_id is required'],
         },
-        date: {
-            type:     Date,
-            default:  Date.now,
-            required: true,
-        },
-        pointsEarned: {
-            type:    Number,
-            min:     [0, 'pointsEarned must be ≥ 0'],
-            default: 0,
-        },
-        billAmount: {
-            type:    Number,
-            min:     [0, 'billAmount must be ≥ 0'],
-            default: 0,
-        },
-        deletedAt: {
-            type:    Date,
-            default: null,
-        },
+        date: { type: Date, default:  Date.now, required: true },
+        pointsEarned: { type: Number, min: [0, 'pointsEarned must be ≥ 0'], default: 0 },
+        billAmount: { type: Number, min: [0, 'billAmount must be ≥ 0'], default: 0 },
+        deletedAt: { type: Date, default: null },
     },
     {
         timestamps:  true,
