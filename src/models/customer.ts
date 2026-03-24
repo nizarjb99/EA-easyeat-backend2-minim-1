@@ -5,8 +5,7 @@ const SALT_ROUNDS = 10;
 
 // ─── URL validator (used by profilePictures) ──────────────────────────────────
 
-const URL_REGEX =
-    /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)$/;
+const URL_REGEX = /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)$/;
 
 // ─── Password validator ───────────────────────────────────────────────────────
 // ≥ 8 chars · at least one uppercase · at least one digit
@@ -56,17 +55,13 @@ const customerSchema = new Schema<
     ICustomerQueryHelpers
 >(
     {
-        name: {
-            type:     String,
-            required: [true, 'Name is required'],
-            trim:     true,
+        name: { type: String,  required: [true, 'Name is required'],
+            trim: true,
             minlength: [2, 'Name must be at least 2 characters'],
             maxlength: [100, 'Name cannot exceed 100 characters'],
         },
 
-        email: {
-            type:     String,
-            required: [true, 'Email is required'],
+        email: { type: String,  required: [true, 'Email is required'],
             // Uniqueness is enforced via a partial index below (email + deletedAt: null).
             // The standard unique:true index is intentionally omitted so that a
             // soft-deleted address can be re-registered.
@@ -75,40 +70,23 @@ const customerSchema = new Schema<
             match: [/.+@.+\..+/, 'Please provide a valid email address'],
         },
 
-        password: {
-            type:   String,
-            select: false,                  // never returned in queries by default
+        password: { type:   String,  select: false,                  // never returned in queries by default
             validate: {
                 validator: (v: string) => PASSWORD_REGEX.test(v),
                 message:   'Password must be at least 8 characters and contain at least one uppercase letter and one number',
             },
         },
 
-        refreshTokenHash: {
-            type:   String,
-            select: false,
-        },
-
-        isActive: {
-            type:    Boolean,
-            default: true,
-        },
-
+        refreshTokenHash: { type: String, select: false },
+        isActive: { type: Boolean, default: true },
         // Soft-delete marker. null = alive. Indexed for fast list filtering.
-        deletedAt: {
-            type:    Date,
-            default: null,
-            index:   true,
-        },
-
-        profilePictures: {
-            type: [String],
+        deletedAt: { type: Date, default: null, index: true },
+        profilePictures: { type: [String],
             validate: {
                 validator: (urls: string[]) => urls.every(u => URL_REGEX.test(u)),
                 message:   'Every profile picture must be a valid URL',
             },
         },
-
         pointsWallet:        [{ type: Schema.Types.ObjectId, ref: 'PointsWallet' }],
         visitHistory:        [{ type: Schema.Types.ObjectId, ref: 'Visit' }],
         favoriteRestaurants: [{ type: Schema.Types.ObjectId, ref: 'Restaurant' }],
@@ -128,14 +106,7 @@ const customerSchema = new Schema<
  * two documents with the same email can coexist as long as at least one of
  * them has deletedAt !== null.
  */
-customerSchema.index(
-    { email: 1 },
-    {
-        unique:                true,
-        partialFilterExpression: { deletedAt: null },
-        name:                  'email_unique_active',
-    }
-);
+customerSchema.index({ email: 1 }, { unique: true, partialFilterExpression: { deletedAt: null }, name: 'email_unique_active' });
 
 // Compound index — useful for "find active customer by email" (login lookup)
 customerSchema.index({ email: 1, deletedAt: 1 }, { name: 'email_deletedAt' });
@@ -143,9 +114,7 @@ customerSchema.index({ email: 1, deletedAt: 1 }, { name: 'email_deletedAt' });
 // ─── Query helper: reusable filter for "alive" documents ──────────────────────
 // Usage: CustomerModel.find().active()   |   CustomerModel.findOne().active()
 
-customerSchema.query.active = function <TResult>(
-    this: QueryWithHelpers<TResult, HydratedDocument<ICustomer>, ICustomerQueryHelpers>
-) {
+customerSchema.query.active = function <TResult>( this: QueryWithHelpers<TResult, HydratedDocument<ICustomer>, ICustomerQueryHelpers>) {
     return this.where({ deletedAt: null });
 };
 
