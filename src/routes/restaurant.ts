@@ -359,7 +359,7 @@ router.get('/filter', controller.getFiltered);
  * @openapi
  * /restaurants/{restaurantId}:
  *   get:
- *     summary: Gets a restaurant by ID
+ *     summary: Gets a restaurant by ID thought for the app mobile
  *     tags: [Restaurants]
  *     parameters:
  *       - in: path
@@ -384,7 +384,7 @@ router.get('/:restaurantId', controller.readRestaurant);
  * @openapi
  * /restaurants/{restaurantId}/full:
  *   get:
- *     summary: Gets a restaurant with all populated fields (employees, rewards, badges, statistics)
+ *     summary: Gets a restaurant with all populated fields thought for the backoffice
  *     tags: [Restaurants]
  *     parameters:
  *       - in: path
