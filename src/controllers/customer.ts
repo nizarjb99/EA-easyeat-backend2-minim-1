@@ -38,6 +38,56 @@ const readCustomerFull = async (req: Request, res: Response, next: NextFunction)
     }
 };
 
+const getCustomerAllBadges = async (req: Request, res: Response, next: NextFunction) => {
+    const { customerId } = req.params;
+    try {
+        const badges = await CustomerService.getCustomerAllBadges(customerId);
+        return res.status(200).json(badges);
+    } catch (error) {
+        return res.status(500).json({ error });
+    }
+};
+
+const getCustomerAllFavouriteRestaurants = async (req: Request, res: Response, next: NextFunction) => {
+    const { customerId } = req.params;
+    try {
+        const restaurants = await CustomerService.getCustomerAllFavouriteRestaurants(customerId);
+        return res.status(200).json(restaurants);
+    } catch (error) {
+        return res.status(500).json({ error });
+    }
+};
+
+const getCustomerAllReviews = async (req: Request, res: Response, next: NextFunction) => {
+    const { customerId } = req.params;
+    try {
+        const reviews = await CustomerService.getCustomerAllReviews(customerId);
+        return res.status(200).json(reviews);
+    } catch (error) {
+        return res.status(500).json({ error });
+    }
+};
+
+const getCustomerAllVisits = async (req: Request, res: Response, next: NextFunction) => {
+    const { customerId } = req.params;
+    try {
+        const visits = await CustomerService.getCustomerAllVisits(customerId);
+        return res.status(200).json(visits);
+    } catch (error) {
+        return res.status(500).json({ error });
+    }
+};
+
+const getCustomerAllPointsWallet = async (req: Request, res: Response, next: NextFunction) => {
+    const { customerId } = req.params;
+    try {
+        const pointsWallet = await CustomerService.getCustomerAllPointsWallet(customerId);
+        return res.status(200).json(pointsWallet);
+        } catch (error) {
+        return res.status(500).json({ error });
+    }
+};
+
 // ─── Read (paginated list) ────────────────────────────────────────────────────
 
 const readAll = async (req: Request, res: Response, next: NextFunction) => {
@@ -125,6 +175,11 @@ export default {
     createCustomer,
     readCustomer,
     readCustomerFull,
+    getCustomerAllBadges,
+    getCustomerAllFavouriteRestaurants,
+    getCustomerAllPointsWallet,
+    getCustomerAllReviews,
+    getCustomerAllVisits,
     readAll,
     updateCustomer,
     softDeleteCustomer,

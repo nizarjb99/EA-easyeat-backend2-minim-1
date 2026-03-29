@@ -5,16 +5,17 @@
     "email": "maria.garcia@gmail.com",
     "password": "password123",
     "profilePictures": [
-      "https://cdn.example.com/users/maria_avatar.jpg"
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Official_Presidential_Portrait_of_President_Donald_J._Trump_%282025%29.jpg/500px-Official_Presidential_Portrait_of_President_Donald_J._Trump_%282025%29.jpg"
     ],
     "pointsWallet": [
-      "66c3d4e5f6a7b8c9d0e1f2a3",
-      "66c3d4e5f6a7b8c9d0e1f2a4"
-    ],
-    "visitHistory": [
       "65f1c2a1b2c3d4e5f6789061",
       "65f1c2a1b2c3d4e5f6789062",
       "65f1c2a1b2c3d4e5f6789063"
+    ],
+    "visitHistory": [
+      "65f1c2a1b2c3d4e5f678c001",
+      "65f1c2a1b2c3d4e5f678c002",
+      "65f1c2a1b2c3d4e5f678c003"
     ],
     "favoriteRestaurants": [
       "65f1c2a1b2c3d4e5f6789001"
@@ -34,8 +35,12 @@
     "name": "Jordi Puig",
     "email": "jordi.puig@gmail.com",
     "profilePictures": [],
-    "pointsWallet": ["66c3d4e5f6a7b8c9d0e1f2a5"],
-    "visitHistory": ["65f1c2a1b2c3d4e5f6789064"],
+    "pointsWallet": [
+      "65f1c2a1b2c3d4e5f6789061",
+      "65f1c2a1b2c3d4e5f6789062",
+      "65f1c2a1b2c3d4e5f6789063"
+    ],
+    "visitHistory": ["65f1c2a1b2c3d4e5f678c004"],
     "favoriteRestaurants": [],
     "badges": ["65f1c2a1b2c3d4e5f6789031"],
     "reviews": [],

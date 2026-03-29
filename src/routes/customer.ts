@@ -188,6 +188,135 @@ router.get('/:customerId', controller.readCustomer);
  */
 router.get('/:customerId/full', controller.readCustomerFull);
 
+/**
+ * @openapi
+ * /customers/{customerId}/full:
+ *   get:
+ *     summary: Gets a customer with all populated relations
+ *     tags: [Customer]
+ *     parameters:
+ *       - in: path
+ *         name: customerId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Customer with all relations populated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *       404:
+ *         description: Customer not found
+ */
+router.get('/:customerId/full', controller.readCustomerFull);
+
+// ─── GET /customers/:customerId/badges ─────────────────────────────────────────
+/**
+ * @openapi
+ * /customers/{customerId}/badges:
+ *   get:
+ *     summary: Gets all badges earned by the customer
+ *     tags: [Customer]
+ *     parameters:
+ *       - in: path
+ *         name: customerId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of badges
+ *       404:
+ *         description: Customer not found
+ */
+router.get('/:customerId/badges', controller.getCustomerAllBadges);
+
+// ─── GET /customers/:customerId/favouriteRestaurants ────────────────────────────
+/**
+ * @openapi
+ * /customers/{customerId}/favouriteRestaurants:
+ *   get:
+ *     summary: Gets all favourite restaurants for the customer
+ *     tags: [Customer]
+ *     parameters:
+ *       - in: path
+ *         name: customerId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of favourite restaurants
+ *       404:
+ *         description: Customer not found
+ */
+router.get('/:customerId/favouriteRestaurants', controller.getCustomerAllFavouriteRestaurants);
+
+// ─── GET /customers/:customerId/pointsWallet ───────────────────────────────────
+/**
+ * @openapi
+ * /customers/{customerId}/pointsWallet:
+ *   get:
+ *     summary: Gets all points wallet entries for the customer
+ *     tags: [Customer]
+ *     parameters:
+ *       - in: path
+ *         name: customerId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of points wallet entries
+ *       404:
+ *         description: Customer not found
+ */
+router.get('/:customerId/pointsWallet', controller.getCustomerAllPointsWallet);
+
+// ─── GET /customers/:customerId/reviews ────────────────────────────────────────
+/**
+ * @openapi
+ * /customers/{customerId}/reviews:
+ *   get:
+ *     summary: Gets all reviews written by the customer
+ *     tags: [Customer]
+ *     parameters:
+ *       - in: path
+ *         name: customerId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of reviews
+ *       404:
+ *         description: Customer not found
+ */
+router.get('/:customerId/reviews', controller.getCustomerAllReviews);
+
+// ─── GET /customers/:customerId/visits ─────────────────────────────────────────
+/**
+ * @openapi
+ * /customers/{customerId}/visits:
+ *   get:
+ *     summary: Gets all visits for the customer
+ *     tags: [Customer]
+ *     parameters:
+ *       - in: path
+ *         name: customerId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of visits
+ *       404:
+ *         description: Customer not found
+ */
+router.get('/:customerId/visits', controller.getCustomerAllVisits);
+
 // ─── PUT /customers/:customerId ───────────────────────────────────────────────
 /**
  * @openapi
