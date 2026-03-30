@@ -124,6 +124,51 @@ const getStatistics = async (restaurantId: string): Promise<IRestaurant | null> 
         .lean<IRestaurant>();
 };
 
+const getEmployees = async (restaurantId: string): Promise<IRestaurant | null> => {
+    return RestaurantModel
+        .findById(restaurantId)
+        .active()
+        .select('employees')
+        .populate('employees')
+        .lean<IRestaurant>();
+};
+
+const getDishes = async (restaurantId: string): Promise<IRestaurant | null> => {
+    return RestaurantModel
+        .findById(restaurantId)
+        .active()
+        .select('dishes')
+        .populate('dishes')
+        .lean<IRestaurant>();
+};
+
+const getRewards = async (restaurantId: string): Promise<IRestaurant | null> => {
+    return RestaurantModel
+        .findById(restaurantId)
+        .active()
+        .select('rewards')
+        .populate('rewards', 'name description pointsRequired active expiry')
+        .lean<IRestaurant>();
+};
+
+const getVisits = async (restaurantId: string): Promise<IRestaurant | null> => {
+    return RestaurantModel
+        .findById(restaurantId)
+        .active()
+        .select('visits')
+        .populate('visits')
+        .lean<IRestaurant>();
+};
+
+const getReviews = async (restaurantId: string): Promise<IRestaurant | null> => {
+    return RestaurantModel
+        .findById(restaurantId)
+        .active()
+        .select('reviews')
+        .populate('reviews')
+        .lean<IRestaurant>();
+};
+
 // ─────────────────────────────────────────────────────────────────────────────
 // globalRating recalculation
 // ─────────────────────────────────────────────────────────────────────────────
@@ -265,6 +310,11 @@ export default {
     getNearby,
     getBadges,
     getStatistics,
+    getEmployees,
+    getDishes,
+    getRewards,
+    getVisits,
+    getReviews,
     updateglobalRating,
     getFilteredRestaurants,
 };

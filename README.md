@@ -1,5 +1,18 @@
 # EASY-EAT API
 
+## 💻 Regles del Backend
+
+> ⚠️ Seguint aquestes regles protegim la feina de tots, evitem errors inesperats i mantenim un backend robust, intel·ligible i escalable. 💪
+
+1. **Els endpoints NO HAN de canviar la seva estructura de resposta** un cop definits finalment. Això protegeix la feina de tots i evita inconsistències.
+2. **Nous requisits → nous endpoints.** Per a nous requisits, prioritza reutilitzar endpoints existents sempre que tingui sentit. Si cal un petit ajust que no alteri l'estructura de la resposta, endavant. Però si el canvi modifica significativament la resposta retornada, s'hauria de crear un endpoint. sempre mirar de fer el més òptim per al sitema.
+3. **Totes les respostes HAN de seguir l'estructura estàndard acordada.**
+4. **No es fan canvis directes a la branca de desenvolupament**; sempre treballar en noves branques.
+5. **El backend NO HA de ser modificat per adaptar-se a necessitats puntuals del frontend**; el frontend s'ha d'adaptar al backend.
+6. **Responsabilitat plena:** Si un company toca alguna cosa i el sistema deixa de funcionar (tant frontend com backend), és responsabilitat seva arreglar el problema que ha causat.
+
+---
+
 ## Descripció
 
 L'API REST d'EASY-EAT és una aplicació backend desenvolupada amb Node.js, TypeScript i MongoDB per gestionar restaurants, clients, ressenyes, recompenses i visites. Aquesta API proporciona una plataforma completa per a aplicacions de gestió de restaurants i sistemes de fidelització de clients.

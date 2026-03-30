@@ -783,4 +783,104 @@ router.get('/:restaurantId/badges', controller.getBadges);
  */
 router.get('/:restaurantId/statistics', controller.getStatistics);
 
+/**
+ * @openapi
+ * /restaurants/{restaurantId}/employees:
+ *   get:
+ *     summary: Gets the employees of a restaurant
+ *     tags: [Restaurants]
+ *     parameters:
+ *       - in: path
+ *         name: restaurantId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Restaurant employees
+ *       404:
+ *         description: Restaurant not found
+ */
+router.get('/:restaurantId/employees',  controller.getEmployees);
+
+/**
+ * @openapi
+ * /restaurants/{restaurantId}/dishes:
+ *   get:
+ *     summary: Gets the dishes of a restaurant
+ *     tags: [Restaurants]
+ *     parameters:
+ *       - in: path
+ *         name: restaurantId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Restaurant dishes
+ *       404:
+ *         description: Restaurant not found
+ */
+router.get('/:restaurantId/dishes',     controller.getDishes);
+
+/**
+ * @openapi
+ * /restaurants/{restaurantId}/rewards:
+ *   get:
+ *     summary: Gets the dishes of a restaurant
+ *     tags: [Restaurants]
+ *     parameters:
+ *       - in: path
+ *         name: restaurantId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Restaurant rewards
+ *       404:
+ *         description: Restaurant not found
+ */
+router.get('/:restaurantId/rewards',    controller.getRewards);
+
+/**
+ * @openapi
+ * /restaurants/{restaurantId}/visits:
+ *   get:
+ *     summary: Gets the dishes of a restaurant
+ *     tags: [Restaurants]
+ *     parameters:
+ *       - in: path
+ *         name: restaurantId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Restaurant visits
+ *       404:
+ *         description: Restaurant not found
+ */
+router.get('/:restaurantId/visits',     controller.getVisits);
+
+/**
+ * @openapi
+ * /restaurants/{restaurantId}/reviews:
+ *   get:
+ *     summary: Gets the dishes of a restaurant
+ *     tags: [Restaurants]
+ *     parameters:
+ *       - in: path
+ *         name: restaurantId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Restaurant reviews
+ *       404:
+ *         description: Restaurant not found
+ */
+router.get('/:restaurantId/reviews',    controller.getReviews);
+
 export default router;

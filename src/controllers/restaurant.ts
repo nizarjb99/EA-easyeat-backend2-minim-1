@@ -212,6 +212,61 @@ const getFiltered = async (req: Request, res: Response, next: NextFunction) => {
     }
 };
 
+const getEmployees = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const restaurant = await RestaurantService.getEmployees(req.params.restaurantId);
+        return restaurant
+            ? res.status(200).json(restaurant)
+            : res.status(404).json({ message: 'Restaurant not found.' });
+    } catch (error) {
+        return res.status(500).json({ error });
+    }
+};
+
+const getDishes = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const restaurant = await RestaurantService.getDishes(req.params.restaurantId);
+        return restaurant
+            ? res.status(200).json(restaurant)
+            : res.status(404).json({ message: 'Restaurant not found.' });
+    } catch (error) {
+        return res.status(500).json({ error });
+    }
+};
+
+const getRewards = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const restaurant = await RestaurantService.getRewards(req.params.restaurantId);
+        return restaurant
+            ? res.status(200).json(restaurant)
+            : res.status(404).json({ message: 'Restaurant not found.' });
+    } catch (error) {
+        return res.status(500).json({ error });
+    }
+};
+
+const getVisits = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const restaurant = await RestaurantService.getVisits(req.params.restaurantId);
+        return restaurant
+            ? res.status(200).json(restaurant)
+            : res.status(404).json({ message: 'Restaurant not found.' });
+    } catch (error) {
+        return res.status(500).json({ error });
+    }
+};
+
+const getReviews = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const restaurant = await RestaurantService.getReviews(req.params.restaurantId);
+        return restaurant
+            ? res.status(200).json(restaurant)
+            : res.status(404).json({ message: 'Restaurant not found.' });
+    } catch (error) {
+        return res.status(500).json({ error });
+    }
+};
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Exports
 // ─────────────────────────────────────────────────────────────────────────────
@@ -230,4 +285,9 @@ export default {
     getBadges,
     getStatistics,
     getFiltered,
+    getEmployees,
+    getDishes,
+    getRewards,
+    getVisits,
+    getReviews,
 };
