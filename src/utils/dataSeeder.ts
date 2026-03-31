@@ -16,6 +16,7 @@ import { StatisticsModel } from '../models/statistics';
 import { PointsWalletModel } from '../models/pointsWallet';
 import { RewardRedemptionModel } from '../models/rewardRedemption';
 import { DishModel } from '../models/dish';
+import { AdminModel } from '../models/admin';
 
 const SALT_ROUNDS = 10;
 
@@ -30,7 +31,8 @@ const modelMap: { [key: string]: mongoose.Model<any> } = {
     'statistics.json': StatisticsModel,
     'pointsWallets.json': PointsWalletModel,
     'rewardRedemptions.json': RewardRedemptionModel,
-    'dishes.json': DishModel
+    'dishes.json': DishModel,
+    'admins.json': AdminModel
 };
 
 /**
@@ -88,8 +90,8 @@ export const insertData = async () => {
                         let data = JSON.parse(fileContent);
 
                         // Hash passwords before seeding customer records
-                        if (file === 'customers.json') {
-                            Logging.info('Hashing customer passwords...');
+                        if (file === 'customers.json' || file === 'admins.json') {
+                            Logging.info(`Hashing passwords for ${file}...`);
                             data = await hashCustomerPasswords(data);
                         }
 
