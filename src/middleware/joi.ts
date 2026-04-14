@@ -12,6 +12,7 @@ import { IStatistics } from '../models/statistics';
 import { IVisit } from '../models/visit';
 import { IDish } from '../models/dish';
 
+
 import Logging from '../library/logging';
 
 export const ValidateJoi = (schema: ObjectSchema) => {
@@ -336,6 +337,17 @@ export const Schemas = {
             portionSize:   Joi.string().valid('small', 'medium', 'large', 'sharing')
         })
     },
+        resourceItem: {
+        create: Joi.object({
+            url: Joi.string().uri().required(),
+            type: Joi.string().required(),
+            description: Joi.string().required()
+        }),
+        update: Joi.object({
+            url: Joi.string().uri(),
+            type: Joi.string(),
+            description: Joi.string()
+        })
+    }
 
-    
 }
